@@ -1,0 +1,3457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title id="pg-title">Furniture Mama</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN SYSTEM — fully editable via admin
+═══════════════════════════════════════════ */
+:root {
+  --c-bg:         #F7F3EC;
+  --c-surface:    #FFFDF9;
+  --c-border:     #E8E2D8;
+  --c-text:       #0F0E0C;
+  --c-muted:      #7A7570;
+  --c-accent:     #C17F3E;
+  --c-accent2:    #1C1A16;
+  --c-cta:        #C17F3E;
+  --c-cta-text:   #FFFFFF;
+  --c-nav-bg:     #0F0E0C;
+  --c-nav-text:   #FFFFFF;
+  --c-hero-bg:    #1C1A16;
+  --c-hero-text:  #FFFFFF;
+  --c-footer-bg:  #0F0E0C;
+  --c-footer-text:rgba(255,255,255,0.55);
+  --font-head:    'Syne', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --radius:       2px;
+  --radius-lg:    6px;
+  --shadow:       0 4px 24px rgba(0,0,0,0.07);
+  --shadow-lg:    0 12px 48px rgba(0,0,0,0.13);
+  --transition:   .22s ease;
+}
+/* offline fallback */
+body { font-family: var(--font-body), 'Segoe UI', Arial, sans-serif; }
+
+/* ── RESET ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { background:var(--c-bg); color:var(--c-text); overflow-x:hidden; line-height:1.6; }
+a { text-decoration:none; color:inherit; }
+button { font-family:var(--font-body); cursor:pointer; }
+img { max-width:100%; display:block; }
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-thumb { background:var(--c-accent); border-radius:2px; }
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+#nav {
+  position:fixed; top:0; left:0; right:0; z-index:900;
+  background:var(--c-nav-bg);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 5%; height:64px;
+  transition:box-shadow var(--transition);
+}
+#nav.scrolled { box-shadow:0 2px 20px rgba(0,0,0,0.25); }
+/* On mobile: hamburger left, logo center */
+@media(max-width:768px){
+  #nav { padding:0 4%; }
+  .nav-logo { position:absolute; left:50%; transform:translateX(-50%); }
+  .hamburger { display:flex !important; }
+}
+
+/* Logo */
+.nav-logo {
+  display:flex; align-items:center; gap:10px; cursor:pointer;
+  flex-shrink:0;
+}
+#logo-img-el {
+  height:48px; width:auto; max-width:180px;
+  object-fit:contain; display:none; border-radius:3px;
+}
+#logo-text-el {
+  font-family:var(--font-head); font-size:1.35rem; font-weight:800;
+  color:var(--c-nav-text); letter-spacing:-.5px;
+  display:flex; align-items:center; gap:4px;
+}
+#logo-text-el span { color:var(--c-accent); }
+
+/* Nav links */
+.nav-links { display:flex; align-items:center; gap:2px; list-style:none; }
+.nav-links a {
+  font-size:.82rem; font-weight:500; letter-spacing:.4px;
+  color:rgba(255,255,255,0.6); padding:8px 14px; border-radius:2px;
+  transition:color var(--transition), background var(--transition);
+  white-space:nowrap; position:relative; text-decoration:none;
+}
+.nav-links a:hover { color:#fff; background:rgba(255,255,255,0.07); }
+.nav-links a.active { color:#fff; }
+.nav-links a.active::after {
+  content:''; position:absolute; bottom:0; left:14px; right:14px;
+  height:2px; background:var(--c-accent); border-radius:2px 2px 0 0;
+}
+
+/* Hamburger — left side */
+.hamburger {
+  display:none; flex-direction:column; justify-content:center; gap:5px;
+  background:none; border:none; padding:6px; cursor:pointer; order:-1;
+  width:40px; height:40px; border-radius:4px; transition:background .2s;
+}
+.hamburger:hover { background:rgba(255,255,255,0.07); }
+.hamburger span {
+  display:block; width:22px; height:2px;
+  background:rgba(255,255,255,0.85); border-radius:2px;
+  transition:transform .3s, opacity .3s;
+  transform-origin:center;
+}
+/* Animated X when open */
+.hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+.hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+/* ── DRAWER OVERLAY ── */
+.drawer-overlay {
+  display:none; position:fixed; inset:0; z-index:2000;
+  background:rgba(0,0,0,0.55); backdrop-filter:blur(2px);
+  opacity:0; transition:opacity .3s;
+}
+.drawer-overlay.open { display:block; opacity:1; }
+
+/* ── DRAWER PANEL ── */
+.drawer {
+  position:fixed; top:0; left:0; bottom:0; z-index:2001;
+  width:min(320px, 85vw);
+  background:var(--c-surface);
+  transform:translateX(-100%);
+  transition:transform .32s cubic-bezier(.4,0,.2,1);
+  display:flex; flex-direction:column;
+  overflow:hidden; box-shadow:6px 0 40px rgba(0,0,0,0.18);
+}
+.drawer.open { transform:translateX(0); }
+
+/* Drawer header */
+.drawer-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 20px 16px;
+  border-bottom:1px solid var(--c-border);
+  background:var(--c-accent2);
+  flex-shrink:0;
+}
+.drawer-logo {
+  font-family:var(--font-head); font-size:1rem; font-weight:800;
+  color:#fff; letter-spacing:-.3px;
+}
+.drawer-logo span { color:var(--c-accent); }
+.drawer-close {
+  width:36px; height:36px; border-radius:50%;
+  background:rgba(255,255,255,0.1); border:none;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:#fff; font-size:1.2rem;
+  transition:background .2s; flex-shrink:0;
+}
+.drawer-close:hover { background:rgba(255,255,255,0.2); }
+
+/* Drawer body */
+.drawer-body { flex:1; overflow-y:auto; padding:8px 0; }
+
+/* Drawer nav items */
+.drawer-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:15px 22px;
+  font-size:.9rem; font-weight:600; color:var(--c-text);
+  border-bottom:1px solid var(--c-border);
+  cursor:pointer; transition:background .15s, color .15s;
+  text-decoration:none; user-select:none;
+  letter-spacing:.2px;
+}
+.drawer-item:hover { background:rgba(193,127,62,.06); color:var(--c-accent); }
+.drawer-item.active-page { color:var(--c-accent); background:rgba(193,127,62,.05); }
+.drawer-item .drawer-arrow {
+  width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+  color:var(--c-muted); font-size:.85rem;
+  transition:transform .25s;
+}
+.drawer-item.expanded .drawer-arrow { transform:rotate(180deg); }
+
+/* Drawer sub-items */
+.drawer-sub {
+  display:none; background:var(--c-bg);
+  border-bottom:1px solid var(--c-border);
+}
+.drawer-sub.open { display:block; }
+.drawer-sub-item {
+  display:block; padding:12px 22px 12px 36px;
+  font-size:.84rem; color:var(--c-muted);
+  cursor:pointer; transition:color .15s, background .15s;
+  border-bottom:1px solid rgba(0,0,0,0.04);
+  text-decoration:none;
+}
+.drawer-sub-item:hover { color:var(--c-accent); background:rgba(193,127,62,.04); }
+.drawer-sub-item:last-child { border-bottom:none; }
+
+/* Drawer footer */
+.drawer-footer {
+  padding:16px 20px; border-top:1px solid var(--c-border);
+  flex-shrink:0; background:var(--c-bg);
+}
+.drawer-wa-btn {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; background:#25D366; color:#fff; border:none;
+  padding:12px; border-radius:var(--radius); font-size:.85rem; font-weight:700;
+  cursor:pointer; transition:background .2s; letter-spacing:.3px;
+}
+.drawer-wa-btn:hover { background:#1EAD58; }
+
+/* ══════════════════════════════════════════
+   PAGE SYSTEM
+══════════════════════════════════════════ */
+.page { display:none; min-height:100vh; padding-top:64px; }
+.page.active { display:block; }
+
+/* ══════════════════════════════════════════
+   HERO — PRODUCTS PAGE
+══════════════════════════════════════════ */
+.hero {
+  background:var(--c-hero-bg);
+  min-height:92vh; display:flex; align-items:center;
+  position:relative; overflow:hidden; padding:80px 5% 60px;
+}
+.hero::after {
+  content:''; position:absolute; right:0; top:0;
+  width:50%; height:100%;
+  background:linear-gradient(135deg, transparent 0%, rgba(193,127,62,.06) 100%);
+  pointer-events:none;
+}
+.hero::before {
+  content:''; position:absolute; right:48%; top:0; bottom:0;
+  width:1px; background:rgba(193,127,62,.15); pointer-events:none;
+}
+.hero-inner {
+  max-width:1200px; margin:0 auto; width:100%;
+  display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;
+}
+.hero-badge {
+  display:inline-block; font-size:.7rem; font-weight:600;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--c-accent); border:1px solid var(--c-accent);
+  padding:5px 14px; border-radius:30px; margin-bottom:24px;
+}
+.hero h1 {
+  font-family:var(--font-head); font-size:clamp(2.6rem,5.5vw,5.2rem);
+  font-weight:800; line-height:1.06; color:var(--c-hero-text);
+  margin-bottom:20px; letter-spacing:-1.5px;
+}
+.hero h1 em { color:var(--c-accent); font-style:normal; }
+.hero-sub {
+  font-size:1rem; color:rgba(255,255,255,0.55); line-height:1.75;
+  max-width:420px; margin-bottom:36px;
+}
+.hero-btns { display:flex; gap:14px; flex-wrap:wrap; }
+.btn-cta {
+  background:var(--c-cta); color:var(--c-cta-text);
+  border:none; padding:14px 30px; border-radius:var(--radius);
+  font-size:.88rem; font-weight:600; letter-spacing:.5px;
+  transition:all var(--transition); display:inline-block;
+}
+.btn-cta:hover { opacity:.88; transform:translateY(-2px); box-shadow:0 8px 24px rgba(193,127,62,.35); }
+.btn-ghost {
+  background:transparent; color:rgba(255,255,255,0.8);
+  border:1px solid rgba(255,255,255,0.25); padding:14px 30px;
+  border-radius:var(--radius); font-size:.88rem; font-weight:500;
+  letter-spacing:.5px; transition:all var(--transition);
+}
+.btn-ghost:hover { border-color:var(--c-accent); color:var(--c-accent); }
+/* Hero right — decorative grid of product placeholder boxes */
+.hero-visual {
+  display:grid; grid-template-columns:1fr 1fr; gap:12px;
+}
+.hero-box {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+  border-radius:6px; aspect-ratio:1; display:flex; align-items:center;
+  justify-content:center; font-size:2.2rem; color:rgba(255,255,255,0.15);
+  transition:all .3s;
+}
+.hero-box:nth-child(2) { margin-top:20px; }
+.hero-box:nth-child(3) { margin-top:-20px; }
+
+/* ══════════════════════════════════════════
+   SHARED SECTION STYLES
+══════════════════════════════════════════ */
+.sec-wrap { max-width:1200px; margin:0 auto; padding:0 5%; }
+.sec-header { text-align:center; padding:72px 5% 44px; }
+.sec-label {
+  font-size:.65rem; font-weight:700; letter-spacing:3.5px; text-transform:uppercase;
+  color:var(--c-accent); margin-bottom:10px; display:inline-block;
+  background:rgba(193,127,62,.08); padding:5px 14px; border-radius:30px;
+}
+.sec-title {
+  font-family:var(--font-head); font-size:clamp(1.8rem,3.5vw,2.8rem);
+  font-weight:900; letter-spacing:-1.2px; color:var(--c-text); line-height:1.12;
+}
+.sec-divider {
+  width:40px; height:3px; background:var(--c-accent);
+  margin:14px auto 0; border-radius:2px;
+}
+.sec-sub { color:var(--c-muted); font-size:.92rem; max-width:480px; margin:12px auto 0; line-height:1.75; }
+
+/* ══════════════════════════════════════════
+   CATEGORY TABS
+══════════════════════════════════════════ */
+.cat-strip {
+  display:flex; gap:0; padding:0 5%;
+  overflow-x:auto; scrollbar-width:none;
+  border-bottom:2px solid var(--c-border);
+  background:var(--c-surface);
+}
+.cat-strip::-webkit-scrollbar { display:none; }
+.cat-btn {
+  background:none; border:none; border-bottom:2px solid transparent;
+  padding:14px 20px; font-size:.78rem; font-weight:600; letter-spacing:.3px;
+  color:var(--c-muted); white-space:nowrap; cursor:pointer;
+  transition:color var(--transition), border-color var(--transition);
+  margin-bottom:-2px;
+}
+.cat-btn:hover { color:var(--c-text); }
+.cat-btn.active { color:var(--c-accent); border-bottom-color:var(--c-accent); }
+
+/* ══════════════════════════════════════════
+   PRODUCT GRID
+══════════════════════════════════════════ */
+.prod-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+  gap:20px; padding:0 5% 80px;
+}
+.prod-card {
+  background:var(--c-surface); border-radius:var(--radius-lg);
+  overflow:hidden; transition:transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  border:1px solid var(--c-border); position:relative;
+}
+.prod-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-lg); border-color:var(--c-accent); }
+.prod-thumb {
+  aspect-ratio:4/3; background:var(--c-bg);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.prod-thumb img { width:100%; height:100%; object-fit:cover; }
+.prod-thumb .no-img { font-size:3rem; color:var(--c-border); }
+.prod-body { padding:16px; }
+.prod-cat-tag {
+  font-size:.65rem; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--c-accent); margin-bottom:5px;
+}
+.prod-name {
+  font-family:var(--font-head); font-size:1rem; font-weight:700;
+  color:var(--c-text); margin-bottom:5px; line-height:1.3;
+}
+.prod-desc { font-size:.8rem; color:var(--c-muted); line-height:1.6; margin-bottom:12px; }
+.prod-price { font-size:1.1rem; font-weight:700; color:var(--c-accent); margin-bottom:12px; }
+.prod-badge {
+  position:absolute; top:10px; left:10px;
+  background:var(--c-accent); color:#fff;
+  font-size:.62rem; font-weight:700; letter-spacing:1px;
+  padding:3px 10px; border-radius:2px; text-transform:uppercase;
+}
+.prod-badge.badge-new    { background:#1D8A5A; }
+.prod-badge.badge-sale   { background:#E24B4A; }
+.prod-badge.badge-hot    { background:#C17F3E; }
+.wa-btn {
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  width:100%; background:#25D366; color:#fff; border:none;
+  padding:10px; border-radius:var(--radius); font-size:.8rem; font-weight:600;
+  text-decoration:none; transition:background var(--transition);
+}
+.wa-btn:hover { background:#1EBD5A; }
+.empty-grid {
+  grid-column:1/-1; text-align:center; padding:80px 20px; color:var(--c-muted);
+}
+
+/* ══════════════════════════════════════════
+   PAGE BANNER (non-product pages)
+══════════════════════════════════════════ */
+.pg-banner {
+  background:var(--c-accent2); padding:60px 5% 48px; text-align:center;
+  position:relative; overflow:hidden;
+}
+.pg-banner::after {
+  content:''; position:absolute; right:-60px; bottom:-60px;
+  width:320px; height:320px; border-radius:50%;
+  background:var(--c-accent); opacity:.08; pointer-events:none;
+}
+.pg-banner::before {
+  content:''; position:absolute; left:-40px; top:-40px;
+  width:200px; height:200px; border-radius:50%;
+  background:var(--c-accent); opacity:.05; pointer-events:none;
+}
+.pg-banner h2 {
+  font-family:var(--font-head); font-size:clamp(1.8rem,4vw,3rem);
+  font-weight:900; color:#fff; letter-spacing:-1.2px; margin-bottom:10px;
+  position:relative; z-index:1;
+}
+.pg-banner p { color:rgba(255,255,255,0.6); font-size:.95rem; max-width:480px; margin:0 auto; position:relative; z-index:1; }
+
+/* ══════════════════════════════════════════
+   FORMS (custom / reviews)
+══════════════════════════════════════════ */
+.form-wrap { max-width:700px; margin:60px auto 80px; padding:0 5%; }
+.form-card {
+  background:var(--c-surface); border-radius:var(--radius-lg);
+  padding:40px; border:1px solid var(--c-border); box-shadow:var(--shadow);
+}
+.form-card h3 {
+  font-family:var(--font-head); font-size:1.3rem; font-weight:700;
+  color:var(--c-text); margin-bottom:24px;
+}
+.fg { margin-bottom:18px; }
+.fg label {
+  display:block; font-size:.78rem; font-weight:600; color:var(--c-accent);
+  margin-bottom:6px; letter-spacing:.3px; text-transform:uppercase;
+}
+.fg input, .fg select, .fg textarea {
+  width:100%; padding:11px 14px; border:1.5px solid var(--c-border);
+  border-radius:var(--radius); font-family:var(--font-body); font-size:.88rem;
+  color:var(--c-text); background:var(--c-bg); outline:none;
+  transition:border-color var(--transition);
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus { border-color:var(--c-accent); }
+.fg textarea { resize:vertical; min-height:100px; }
+.fg-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.upload-zone {
+  border:2px dashed var(--c-border); border-radius:var(--radius-lg);
+  padding:36px; text-align:center; position:relative; cursor:pointer;
+  background:var(--c-bg); transition:border-color var(--transition);
+}
+.upload-zone:hover { border-color:var(--c-accent); }
+.upload-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.upload-zone p { color:var(--c-muted); font-size:.85rem; }
+.upload-zone span { color:var(--c-accent); font-weight:600; }
+.upload-preview { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.upload-preview img { width:76px; height:76px; object-fit:cover; border-radius:4px; border:1px solid var(--c-border); }
+.form-submit {
+  width:100%; padding:15px; background:var(--c-cta); color:var(--c-cta-text);
+  border:none; border-radius:var(--radius); font-size:.9rem; font-weight:700;
+  letter-spacing:.5px; margin-top:8px; transition:all var(--transition);
+}
+.form-submit:hover { opacity:.88; transform:translateY(-1px); }
+.success-msg {
+  background:#E6F4EA; border:1px solid #A8D5B0; border-radius:var(--radius);
+  padding:14px; text-align:center; color:#2D6A35; font-weight:500;
+  display:none; margin-top:14px; font-size:.88rem;
+}
+/* steps */
+.steps-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:16px; margin-top:40px;
+}
+.step-card {
+  background:var(--c-surface); border:1px solid var(--c-border);
+  border-radius:var(--radius-lg); padding:24px 16px; text-align:center;
+}
+.step-icon { font-size:1.8rem; margin-bottom:10px; }
+.step-title { font-family:var(--font-head); font-size:.88rem; font-weight:700; color:var(--c-text); margin-bottom:4px; }
+.step-sub { font-size:.75rem; color:var(--c-muted); line-height:1.5; }
+
+/* ══════════════════════════════════════════
+   REVIEWS
+══════════════════════════════════════════ */
+.rev-stats {
+  background:var(--c-accent2); padding:48px 5%;
+  display:flex; align-items:center; justify-content:center; gap:60px; flex-wrap:wrap;
+}
+.rev-stat { text-align:center; }
+.rev-stat-num {
+  font-family:var(--font-head); font-size:2.8rem; font-weight:800;
+  color:var(--c-accent);
+}
+.rev-stat-lbl { font-size:.72rem; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-top:4px; }
+.rev-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:18px; padding:0 5% 80px;
+}
+.rev-card {
+  background:var(--c-surface); border:1px solid var(--c-border);
+  border-radius:var(--radius-lg); padding:22px; border-top:3px solid var(--c-accent);
+  transition:transform var(--transition);
+}
+.rev-card:hover { transform:translateY(-4px); }
+.rev-head { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.rev-avatar {
+  width:42px; height:42px; border-radius:50%;
+  background:linear-gradient(135deg,var(--c-accent),var(--c-accent2));
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-head); font-size:1rem; font-weight:800; color:#fff;
+}
+.rev-name { font-weight:600; font-size:.88rem; color:var(--c-text); }
+.rev-date { font-size:.72rem; color:var(--c-muted); margin-top:2px; }
+.rev-stars { color:#F5A623; font-size:.85rem; margin-bottom:8px; }
+.rev-product {
+  display:inline-block; font-size:.7rem; font-weight:600; text-transform:uppercase;
+  letter-spacing:1px; color:var(--c-accent); background:rgba(193,127,62,.08);
+  padding:2px 10px; border-radius:20px; margin-bottom:8px;
+}
+.rev-text { font-size:.85rem; color:var(--c-muted); line-height:1.7; }
+.write-rev-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  width:fit-content; margin:32px auto; display:block;
+  background:var(--c-cta); color:var(--c-cta-text); border:none;
+  padding:13px 30px; border-radius:var(--radius); font-size:.85rem; font-weight:700;
+  letter-spacing:.5px; transition:all var(--transition);
+}
+.write-rev-btn:hover { opacity:.88; transform:translateY(-2px); box-shadow:0 8px 24px rgba(193,127,62,.35); }
+/* review modal */
+.modal-bg {
+  position:fixed; inset:0; z-index:2000;
+  background:rgba(0,0,0,0.55); backdrop-filter:blur(4px);
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.modal-bg.open { display:flex; }
+.modal-box {
+  background:var(--c-surface); border-radius:var(--radius-lg);
+  padding:36px; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;
+  border:1px solid var(--c-border);
+}
+.modal-box h3 { font-family:var(--font-head); font-size:1.2rem; font-weight:700; color:var(--c-text); margin-bottom:20px; }
+.modal-close {
+  float:right; background:none; border:none; font-size:1.2rem;
+  color:var(--c-muted); cursor:pointer; margin-top:-4px;
+}
+.star-row { display:flex; gap:6px; margin-bottom:4px; }
+.star-row span { font-size:1.5rem; cursor:pointer; color:#DDD; transition:color .1s; }
+.star-row span.lit { color:#F5A623; }
+
+/* ══════════════════════════════════════════
+   BLOG
+══════════════════════════════════════════ */
+.blog-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+  gap:24px; padding:0 5% 80px;
+}
+.blog-card {
+  background:var(--c-surface); border:1px solid var(--c-border);
+  border-radius:var(--radius-lg); overflow:hidden; cursor:pointer;
+  transition:all var(--transition);
+}
+.blog-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-lg); }
+.blog-thumb {
+  aspect-ratio:16/9; background:var(--c-bg);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.5rem; overflow:hidden;
+}
+.blog-thumb img { width:100%; height:100%; object-fit:cover; }
+.blog-body { padding:20px; }
+.blog-cat-tag {
+  font-size:.65rem; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--c-accent); margin-bottom:7px;
+}
+.blog-title {
+  font-family:var(--font-head); font-size:1.05rem; font-weight:700;
+  color:var(--c-text); margin-bottom:7px; line-height:1.35;
+}
+.blog-excerpt { font-size:.8rem; color:var(--c-muted); line-height:1.65; margin-bottom:12px; }
+.blog-meta { display:flex; justify-content:space-between; align-items:center; font-size:.72rem; color:var(--c-muted); }
+.blog-more { color:var(--c-accent); font-weight:600; background:none; border:none; font-family:var(--font-body); font-size:.78rem; cursor:pointer; }
+.blog-detail { max-width:740px; margin:0 auto; padding:50px 5% 80px; display:none; }
+.blog-detail.open { display:block; }
+.back-link {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:.8rem; color:var(--c-muted); border:1px solid var(--c-border);
+  padding:7px 16px; border-radius:30px; margin-bottom:28px;
+  transition:all var(--transition); background:none;
+}
+.back-link:hover { border-color:var(--c-accent); color:var(--c-accent); }
+.blog-detail h1 { font-family:var(--font-head); font-size:2rem; font-weight:800; color:var(--c-text); letter-spacing:-.5px; margin-bottom:12px; }
+.blog-detail-body { font-size:.9rem; color:var(--c-text); line-height:1.9; margin-top:20px; }
+.blog-detail-body p { margin-bottom:14px; }
+
+/* ══════════════════════════════════════════
+   POLICY
+══════════════════════════════════════════ */
+.policy-wrap { max-width:820px; margin:0 auto; padding:50px 5% 80px; }
+.policy-tabs { display:flex; border-bottom:2px solid var(--c-border); margin-bottom:32px; }
+.policy-tab {
+  padding:12px 28px; font-family:var(--font-body); font-size:.85rem; font-weight:600;
+  cursor:pointer; background:none; border:none; color:var(--c-muted);
+  border-bottom:3px solid transparent; margin-bottom:-2px; transition:all .2s;
+}
+.policy-tab.active { color:var(--c-text); border-bottom-color:var(--c-accent); }
+.policy-pane { display:none; }
+.policy-pane.active { display:block; }
+.policy-pane h2 { font-family:var(--font-head); font-size:1.7rem; font-weight:800; color:var(--c-text); margin-bottom:6px; letter-spacing:-.5px; }
+.policy-updated { font-size:.75rem; color:var(--c-muted); margin-bottom:24px; }
+.policy-sec {
+  background:var(--c-surface); border:1px solid var(--c-border);
+  border-radius:var(--radius-lg); padding:22px; margin-bottom:14px;
+}
+.policy-sec h3 { font-family:var(--font-head); font-size:.95rem; font-weight:700; color:var(--c-text); margin-bottom:8px; }
+.policy-sec p, .policy-sec li { font-size:.85rem; color:var(--c-muted); line-height:1.8; }
+.policy-sec ul { padding-left:18px; }
+.policy-sec li { margin-bottom:5px; }
+.policy-note {
+  border-left:3px solid var(--c-accent); background:rgba(193,127,62,.06);
+  padding:12px 16px; border-radius:0 4px 4px 0; margin-top:10px;
+  font-size:.82rem; color:var(--c-accent); font-weight:500;
+}
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+footer {
+  background:var(--c-footer-bg); padding:60px 5% 28px;
+  color:var(--c-footer-text);
+}
+.foot-grid { display:grid; grid-template-columns:2fr 1fr 1fr; gap:40px; margin-bottom:48px; }
+.foot-brand-name {
+  font-family:var(--font-head); font-size:1.4rem; font-weight:800;
+  color:#fff; margin-bottom:10px;
+}
+.foot-brand-desc { font-size:.82rem; line-height:1.8; max-width:280px; }
+/* Social icons in footer contact column */
+.foot-socials { display:flex; gap:10px; margin-top:14px; }
+.foot-social-icon {
+  width:36px; height:36px; border-radius:50%;
+  border:1px solid rgba(255,255,255,0.15);
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,0.5); font-size:.9rem;
+  transition:all .2s; text-decoration:none; cursor:pointer;
+}
+.foot-social-icon:hover { border-color:var(--c-accent); color:var(--c-accent); }
+.foot-col h4 {
+  font-size:.72rem; font-weight:700; letter-spacing:2.5px; text-transform:uppercase;
+  color:rgba(255,255,255,0.85); margin-bottom:16px;
+}
+.foot-col a {
+  display:block; font-size:.82rem; color:rgba(255,255,255,0.45);
+  margin-bottom:9px; transition:color .2s;
+}
+.foot-col a:hover { color:var(--c-accent); }
+.foot-bottom {
+  border-top:1px solid rgba(255,255,255,0.07); padding-top:22px;
+  display:flex; justify-content:space-between; font-size:.75rem; flex-wrap:wrap; gap:8px;
+}
+
+/* ══════════════════════════════════════════
+   ADMIN — hidden, accessed via secret URL hash
+══════════════════════════════════════════ */
+#admin-overlay {
+  position:fixed; inset:0; z-index:9000;
+  background:#F0EDE8; display:none; overflow-y:auto;
+}
+#admin-overlay.open { display:block; }
+
+/* Login */
+.adm-login-wrap {
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(135deg,#1A1714 0%,#2D2D2D 100%);
+}
+.adm-login-box {
+  background:#fff; border-radius:8px; padding:48px 40px;
+  width:100%; max-width:380px; text-align:center; box-shadow:var(--shadow-lg);
+}
+.adm-login-box h2 {
+  font-family:var(--font-head); font-size:1.7rem; font-weight:800;
+  color:var(--c-text); margin-bottom:6px;
+}
+.adm-login-box p { font-size:.82rem; color:var(--c-muted); margin-bottom:28px; }
+.adm-login-box input {
+  width:100%; padding:11px 14px; margin-bottom:12px;
+  border:1.5px solid var(--c-border); border-radius:var(--radius);
+  font-family:var(--font-body); font-size:.9rem; outline:none;
+  transition:border-color .2s;
+}
+.adm-login-box input:focus { border-color:var(--c-accent); }
+.adm-login-btn {
+  width:100%; padding:13px; background:var(--c-accent2); color:#fff; border:none;
+  border-radius:var(--radius); font-size:.9rem; font-weight:700;
+  letter-spacing:.5px; transition:background .2s;
+}
+.adm-login-btn:hover { background:var(--c-accent); }
+.adm-login-err { color:#C62828; font-size:.78rem; margin-top:8px; display:none; }
+
+/* Admin panel layout */
+.adm-panel { display:none; }
+.adm-panel.open { display:flex; min-height:100vh; }
+.adm-sidebar {
+  width:230px; background:#1A1714; flex-shrink:0; display:flex; flex-direction:column;
+}
+.adm-sidebar-logo {
+  padding:22px 20px; border-bottom:1px solid rgba(255,255,255,0.05);
+  font-family:var(--font-head); font-size:1rem; font-weight:800; color:var(--c-accent);
+}
+.adm-sidebar-logo span { display:block; font-size:.65rem; color:rgba(255,255,255,0.35); font-family:var(--font-body); font-weight:400; margin-top:2px; letter-spacing:1.5px; text-transform:uppercase; }
+.adm-nav { flex:1; padding:14px 0; overflow-y:auto; }
+.adm-nav-item {
+  display:flex; align-items:center; gap:9px; padding:11px 20px;
+  color:rgba(255,255,255,0.45); font-size:.82rem; font-weight:500;
+  cursor:pointer; transition:all .2s; border-left:3px solid transparent;
+}
+.adm-nav-item:hover { color:#fff; background:rgba(255,255,255,0.04); }
+.adm-nav-item.active { color:var(--c-accent); border-left-color:var(--c-accent); background:rgba(193,127,62,.06); }
+.adm-logout {
+  padding:16px 20px; border-top:1px solid rgba(255,255,255,0.05);
+  color:rgba(255,255,255,0.3); font-size:.8rem; display:flex; align-items:center;
+  gap:8px; cursor:pointer; transition:color .2s;
+}
+.adm-logout:hover { color:#fff; }
+.adm-main { flex:1; overflow-y:auto; }
+.adm-topbar {
+  background:#fff; padding:16px 28px; border-bottom:1px solid var(--c-border);
+  display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10;
+}
+.adm-topbar h2 { font-family:var(--font-head); font-size:1.2rem; font-weight:800; color:var(--c-text); }
+.adm-content { padding:24px 28px; }
+.adm-tab { display:none; }
+.adm-tab.active { display:block; }
+
+/* Admin cards / tables */
+.adm-card {
+  background:#fff; border-radius:var(--radius-lg); padding:22px;
+  border:1px solid var(--c-border); margin-bottom:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.adm-card-title {
+  font-family:var(--font-head); font-size:.9rem; font-weight:700;
+  color:var(--c-text); border-bottom:1px solid var(--c-border);
+  padding-bottom:10px; margin-bottom:16px;
+}
+.adm-stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:14px; margin-bottom:22px; }
+.adm-stat {
+  background:#fff; border:1px solid var(--c-border); border-radius:var(--radius-lg);
+  padding:18px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.adm-stat .n { font-family:var(--font-head); font-size:1.9rem; font-weight:800; color:var(--c-accent); }
+.adm-stat .l { font-size:.68rem; text-transform:uppercase; letter-spacing:1px; color:var(--c-muted); margin-top:4px; }
+.adm-tbl { width:100%; border-collapse:collapse; }
+.adm-tbl th { text-align:left; padding:9px 12px; font-size:.7rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--c-muted); border-bottom:2px solid var(--c-border); }
+.adm-tbl td { padding:11px 12px; font-size:.83rem; border-bottom:1px solid var(--c-border); vertical-align:middle; }
+.adm-tbl tr:last-child td { border:none; }
+.adm-tbl td img { width:44px; height:44px; object-fit:cover; border-radius:4px; }
+.td-actions { display:flex; gap:6px; }
+.btn-edit { background:#EEF2FF; color:#3949AB; border:1px solid #C5CAE9; padding:5px 12px; border-radius:3px; font-size:.73rem; font-weight:600; cursor:pointer; transition:background .2s; }
+.btn-edit:hover { background:#C5CAE9; }
+.btn-del { background:#FFF0F0; color:#C62828; border:1px solid #FFCDD2; padding:5px 12px; border-radius:3px; font-size:.73rem; font-weight:600; cursor:pointer; transition:background .2s; }
+.btn-del:hover { background:#FFCDD2; }
+.btn-done { background:#E8F5E9; color:#2E7D32; border:1px solid #A5D6A7; padding:5px 12px; border-radius:3px; font-size:.73rem; font-weight:600; cursor:pointer; }
+.adm-add-btn {
+  background:var(--c-accent2); color:#fff; border:none;
+  padding:9px 18px; border-radius:var(--radius); font-size:.8rem; font-weight:700;
+  cursor:pointer; letter-spacing:.3px; transition:background .2s;
+}
+.adm-add-btn:hover { background:var(--c-accent); }
+.adm-save-btn {
+  background:var(--c-accent2); color:#fff; border:none;
+  padding:10px 22px; border-radius:var(--radius); font-size:.85rem; font-weight:700;
+  cursor:pointer; transition:background .2s; margin-top:6px;
+}
+.adm-save-btn:hover { background:var(--c-accent); }
+.adm-cancel-btn {
+  background:none; border:1px solid var(--c-border); padding:10px 18px;
+  border-radius:var(--radius); font-size:.85rem; color:var(--c-muted);
+  cursor:pointer; transition:border-color .2s;
+}
+.adm-cancel-btn:hover { border-color:var(--c-accent); }
+.req-badge { font-size:.68rem; font-weight:700; padding:3px 9px; border-radius:20px; letter-spacing:.5px; text-transform:uppercase; }
+.req-badge.pending { background:#FFF3E0; color:#E65100; }
+.req-badge.reviewed { background:#E8F5E9; color:#2E7D32; }
+.img-prev-wrap { margin-top:8px; }
+.img-prev-wrap img { max-width:110px; max-height:80px; object-fit:cover; border-radius:4px; border:1px solid var(--c-border); }
+
+/* Admin modal */
+.adm-modal { position:fixed; inset:0; z-index:9500; background:rgba(0,0,0,0.5); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; padding:20px; }
+.adm-modal.open { display:flex; }
+.adm-modal-box {
+  background:#fff; border-radius:var(--radius-lg); padding:30px;
+  width:100%; max-width:540px; max-height:90vh; overflow-y:auto;
+  border:1px solid var(--c-border);
+}
+.adm-modal-box h3 { font-family:var(--font-head); font-size:1.1rem; font-weight:800; color:var(--c-text); margin-bottom:18px; }
+.adm-modal-box .fg input,
+.adm-modal-box .fg select,
+.adm-modal-box .fg textarea {
+  width:100%; padding:10px 12px; border:1.5px solid var(--c-border); border-radius:var(--radius);
+  font-family:var(--font-body); font-size:.85rem; outline:none; transition:border-color .2s;
+}
+.adm-modal-box .fg input:focus,
+.adm-modal-box .fg select:focus,
+.adm-modal-box .fg textarea:focus { border-color:var(--c-accent); }
+.adm-modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:18px; }
+
+/* Color palette editor */
+.color-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+.color-row { display:flex; align-items:center; gap:10px; }
+.color-row label { flex:1; font-size:.78rem; color:var(--c-muted); font-weight:500; }
+.color-row input[type=color] { width:44px; height:36px; border:1px solid var(--c-border); border-radius:4px; cursor:pointer; padding:2px; background:none; }
+
+/* Logo uploader big preview */
+.logo-preview-big {
+  width:100%; max-width:320px; height:100px; border:2px dashed var(--c-border);
+  border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center;
+  margin:10px 0; background:var(--c-bg); overflow:hidden;
+}
+.logo-preview-big img { max-width:100%; max-height:100%; object-fit:contain; }
+.logo-preview-big span { font-size:.8rem; color:var(--c-muted); }
+
+/* toast */
+.toast {
+  position:fixed; bottom:28px; right:28px; z-index:9999;
+  background:#1A1714; color:#fff; padding:12px 22px;
+  border-radius:4px; font-size:.82rem; font-weight:500;
+  box-shadow:var(--shadow-lg); transform:translateY(80px);
+  transition:transform .3s; pointer-events:none; border-left:3px solid var(--c-accent);
+}
+.toast.show { transform:translateY(0); }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Laptop (≤1024px)
+══════════════════════════════════════════ */
+@media(max-width:1024px) {
+  .prod-grid { grid-template-columns:repeat(3,1fr); }
+  .hero h1 { font-size:clamp(2rem,4vw,3rem); }
+  .pd-grid { grid-template-columns:1fr 1fr; gap:32px; }
+  .pd-related-grid { grid-template-columns:repeat(3,1fr); }
+  .foot-grid { grid-template-columns:1.5fr 1fr 1fr; }
+  .rev-grid { grid-template-columns:1fr 1fr; }
+  .banner { grid-template-columns:1fr 1fr; gap:28px; }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Tablet (≤768px)
+══════════════════════════════════════════ */
+@media(max-width:768px) {
+  /* Nav */
+  .nav-links { display:none; }
+  .hamburger { display:flex; }
+  /* Hero */
+  .hero-inner { grid-template-columns:1fr; }
+  .hero-feat-grid { display:none; }
+  .hero { min-height:auto; padding:52px 5% 44px; }
+  .hero h1 { font-size:clamp(1.8rem,5vw,2.6rem); }
+  .hero-btns { flex-direction:column; gap:10px; }
+  .btn-cta, .btn-ghost { width:100%; text-align:center; padding:15px; font-size:.9rem; }
+  /* Products */
+  .prod-grid { grid-template-columns:1fr 1fr; gap:14px; padding:0 4% 60px; }
+  .sec-header { padding:48px 4% 32px; }
+  .cat-strip { padding:0 4%; }
+  /* Product detail */
+  .pd-grid { grid-template-columns:1fr; gap:24px; }
+  .pd-imgs { position:static; }
+  .pd-related-grid { grid-template-columns:1fr 1fr; }
+  .pd-wrap { padding:24px 4% 60px; }
+  .pd-specs { grid-template-columns:1fr 1fr; }
+  /* Forms */
+  .fg-row { grid-template-columns:1fr; }
+  .form-wrap { padding:0 4%; }
+  /* Reviews */
+  .rev-grid { grid-template-columns:1fr 1fr; gap:14px; padding:0 4% 48px; }
+  .rev-stats { gap:20px; flex-wrap:wrap; justify-content:center; }
+  /* Blog */
+  .blog-grid { grid-template-columns:1fr 1fr; gap:14px; }
+  /* Banner */
+  .banner { grid-template-columns:1fr; gap:28px; padding:48px 5%; }
+  .banner-steps { grid-template-columns:1fr 1fr; }
+  /* Footer */
+  .foot-grid { grid-template-columns:1fr 1fr; gap:24px; }
+  .foot-grid > div:first-child { grid-column:1/-1; }
+  /* Admin */
+  .adm-panel { flex-direction:column; }
+  .adm-sidebar { width:100%; max-height:none; }
+  .adm-nav { display:grid; grid-template-columns:repeat(3,1fr); gap:4px; }
+  .adm-nav-item { padding:8px 6px; font-size:.72rem; text-align:center; }
+  .adm-content { padding:14px; }
+  .adm-modal-box { padding:20px; max-width:98vw; }
+  .color-grid { grid-template-columns:1fr 1fr; }
+  .font-grid { grid-template-columns:1fr 1fr; }
+  /* Steps */
+  .steps-grid { grid-template-columns:1fr 1fr; }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Phone (≤480px)
+══════════════════════════════════════════ */
+@media(max-width:480px) {
+  /* Nav */
+  .nav { padding:0 4%; height:58px; }
+  .nav-logo { font-size:1rem; }
+  /* Hero */
+  .hero { padding:40px 4% 36px; }
+  .hero h1 { font-size:clamp(1.55rem,7vw,2rem); letter-spacing:-.5px; }
+  .hero-sub { font-size:.82rem; }
+  .hero-stats { gap:16px; flex-wrap:wrap; }
+  /* Products */
+  .prod-grid { grid-template-columns:1fr 1fr; gap:10px; padding:0 3% 48px; }
+  .prod-name { font-size:.82rem; }
+  .prod-price { font-size:.9rem; }
+  .wa-btn { font-size:.72rem; padding:8px 6px; }
+  .cat-strip { padding:0 3%; }
+  .cat-btn { padding:12px 14px; font-size:.72rem; }
+  .pagination { gap:4px; padding:0 3% 36px; }
+  .pg-btn { width:32px; height:32px; font-size:.75rem; }
+  /* Sec headers */
+  .sec-header { padding:36px 4% 24px; }
+  .sec-title { font-size:1.5rem; }
+  /* Product detail */
+  .pd-name { font-size:1.4rem; }
+  .pd-specs { grid-template-columns:1fr 1fr; }
+  .pd-thumbs { gap:6px; }
+  .pd-thumb { width:56px; height:56px; }
+  .pd-related-grid { grid-template-columns:1fr 1fr; gap:10px; }
+  /* Reviews */
+  .rev-grid { grid-template-columns:1fr; gap:12px; padding:0 4% 40px; }
+  .rev-stats { padding:16px 4%; gap:14px; }
+  .rev-stat-num { font-size:1.6rem; }
+  /* Blog */
+  .blog-grid { grid-template-columns:1fr; }
+  .blog-card { flex-direction:column; }
+  .blog-thumb { width:100%; height:180px; }
+  /* Banner / Custom */
+  .banner { padding:36px 4%; }
+  .banner-steps { grid-template-columns:1fr 1fr; gap:10px; }
+  .step { padding:12px; }
+  /* Footer */
+  .foot-grid { grid-template-columns:1fr; gap:20px; }
+  .foot-grid > div:first-child { grid-column:1; }
+  .foot-bottom { flex-direction:column; text-align:center; gap:6px; }
+  /* Admin */
+  .adm-nav { grid-template-columns:repeat(2,1fr); }
+  .adm-nav-item { font-size:.68rem; padding:7px 4px; }
+  .adm-tbl { font-size:.75rem; }
+  .adm-tbl th, .adm-tbl td { padding:7px 6px; }
+  .adm-modal-box { padding:16px; max-height:95vh; }
+  .adm-modal-actions { flex-wrap:wrap; }
+  .adm-save-btn, .adm-cancel-btn { width:100%; text-align:center; }
+  /* Forms */
+  .form-card { padding:24px 18px; }
+  .steps-grid { grid-template-columns:1fr 1fr; gap:8px; }
+  /* Policy */
+  .policy-wrap { padding:24px 4% 48px; }
+  /* Back bar */
+  #global-back-bar { padding:8px 4%; }
+  .back-bar-btn { padding:5px 12px; font-size:.75rem; }
+  /* Toast */
+  .toast { right:12px; left:12px; bottom:16px; text-align:center; }
+  /* Touch targets */
+  .cat-btn, .pg-btn, .nav-link, .btn-cta, .btn-ghost,
+  .wa-btn, .pd-wa-btn, .pd-wa-secondary,
+  .adm-nav-item, .adm-save-btn, .adm-add-btn, .btn-edit, .btn-del { min-height:44px; }
+}
+
+
+/* ══ GLOBAL BACK BAR ══ */
+#global-back-bar {
+  display:none; position:sticky; top:64px; z-index:800;
+  background:var(--c-surface); border-bottom:1px solid var(--c-border);
+  padding:10px 5%; align-items:center; gap:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.back-bar-btn {
+  display:flex; align-items:center; gap:6px;
+  background:none; border:1px solid var(--c-border);
+  padding:6px 16px; border-radius:30px;
+  font-size:.8rem; font-weight:500; color:var(--c-muted);
+  cursor:pointer; transition:all .2s;
+}
+.back-bar-btn:hover { border-color:var(--c-accent); color:var(--c-accent); }
+.back-bar-crumb { font-size:.8rem; color:var(--c-muted); display:flex; align-items:center; gap:6px; }
+.back-bar-crumb span { color:var(--c-text); font-weight:500; }
+
+/* ══ PRODUCT DETAIL PAGE ══ */
+#page-product-detail { background:var(--c-bg); }
+.pd-wrap { max-width:1100px; margin:0 auto; padding:40px 5% 80px; }
+.pd-back { display:inline-flex; align-items:center; gap:6px; font-size:.8rem; color:var(--c-muted); border:1px solid var(--c-border); padding:7px 16px; border-radius:30px; margin-bottom:28px; cursor:pointer; background:none; transition:all .2s; }
+.pd-back:hover { border-color:var(--c-accent); color:var(--c-accent); }
+.pd-grid { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start; }
+.pd-imgs { position:sticky; top:84px; }
+.pd-main-img { width:100%; aspect-ratio:4/3; border-radius:var(--radius-lg); overflow:hidden; background:var(--c-border); border:1px solid var(--c-border); margin-bottom:10px; display:flex; align-items:center; justify-content:center; }
+.pd-main-img img { width:100%; height:100%; object-fit:cover; cursor:zoom-in; }
+.pd-main-img .no-img-lg { font-size:5rem; color:var(--c-border); }
+.pd-thumbs { display:flex; gap:8px; flex-wrap:wrap; }
+.pd-thumb { width:72px; height:72px; border-radius:4px; border:2px solid var(--c-border); overflow:hidden; cursor:pointer; transition:border-color .2s; background:var(--c-bg); display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+.pd-thumb:hover { border-color:var(--c-accent); }
+.pd-thumb.active { border-color:var(--c-accent); }
+.pd-thumb img { width:100%; height:100%; object-fit:cover; }
+.pd-info { }
+.pd-cat-tag { font-size:.68rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--c-accent); margin-bottom:8px; display:block; }
+.pd-name { font-family:var(--font-head); font-size:clamp(1.5rem,3vw,2.2rem); font-weight:800; color:var(--c-text); letter-spacing:-.5px; margin-bottom:10px; line-height:1.15; }
+.pd-price { font-size:1.6rem; font-weight:800; color:var(--c-accent); margin-bottom:16px; }
+.pd-desc { font-size:.9rem; color:var(--c-muted); line-height:1.8; margin-bottom:24px; }
+.pd-section { margin-bottom:20px; border-top:1px solid var(--c-border); padding-top:18px; }
+.pd-section-title { font-family:var(--font-head); font-size:.8rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--c-text); margin-bottom:12px; }
+.pd-specs { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.pd-spec { background:var(--c-bg); border-radius:4px; padding:10px 14px; border:1px solid var(--c-border); }
+.pd-spec-label { font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--c-muted); margin-bottom:3px; }
+.pd-spec-val { font-size:.88rem; font-weight:600; color:var(--c-text); }
+.pd-materials { display:flex; gap:8px; flex-wrap:wrap; }
+.pd-mat-tag { background:var(--c-bg); border:1px solid var(--c-border); padding:6px 14px; border-radius:30px; font-size:.78rem; font-weight:500; color:var(--c-text); }
+.pd-wa-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; background:#25D366; color:#fff; border:none; padding:16px; border-radius:var(--radius); font-size:.95rem; font-weight:700; cursor:pointer; margin-top:24px; transition:background .2s; text-decoration:none; letter-spacing:.3px; }
+.pd-wa-btn:hover { background:#1EBD5A; }
+.pd-wa-secondary { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; background:transparent; color:var(--c-accent); border:1.5px solid var(--c-accent); padding:13px; border-radius:var(--radius); font-size:.88rem; font-weight:600; cursor:pointer; margin-top:10px; transition:all .2s; }
+.pd-wa-secondary:hover { background:var(--c-accent); color:#fff; }
+@media(max-width:700px){.pd-grid{grid-template-columns:1fr;}.pd-imgs{position:static;}}
+
+/* ══ RELATED PRODUCTS ══ */
+.pd-related { margin-top:48px; padding-top:32px; border-top:1px solid var(--c-border); }
+.pd-related-title { font-family:var(--font-head); font-size:1.1rem; font-weight:800; color:var(--c-text); margin-bottom:20px; letter-spacing:-.3px; }
+.pd-related-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }
+.pd-rel-card { background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--radius-lg); overflow:hidden; cursor:pointer; transition:all .2s; }
+.pd-rel-card:hover { transform:translateY(-3px); box-shadow:var(--shadow); }
+.pd-rel-thumb { aspect-ratio:4/3; background:var(--c-bg); display:flex; align-items:center; justify-content:center; overflow:hidden; font-size:2rem; color:var(--c-border); }
+.pd-rel-thumb img { width:100%; height:100%; object-fit:cover; }
+.pd-rel-body { padding:12px; }
+.pd-rel-name { font-family:var(--font-head); font-size:.88rem; font-weight:700; color:var(--c-text); margin-bottom:4px; line-height:1.3; }
+.pd-rel-price { font-size:.9rem; font-weight:700; color:var(--c-accent); }
+
+
+/* ══ HERO FEATURED PRODUCTS (replacing placeholder boxes) ══ */
+.hero-feat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.hero-feat-card { border-radius:6px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); cursor:pointer; transition:transform .25s; aspect-ratio:1; position:relative; background:rgba(255,255,255,0.04); display:flex; align-items:center; justify-content:center; }
+.hero-feat-card:hover { transform:scale(1.03); }
+.hero-feat-card img { width:100%; height:100%; object-fit:cover; }
+.hero-feat-card .feat-placeholder { font-size:2.2rem; color:rgba(255,255,255,0.15); }
+/* Offsets applied via JS in renderHeroFeatured for dynamic cards */
+.hero-feat-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%); }
+.hero-feat-name { position:absolute; bottom:8px; left:8px; right:8px; font-family:var(--font-head); font-size:.72rem; font-weight:700; color:#fff; line-height:1.2; }
+
+/* ══ PAGINATION ══ */
+.pagination { display:flex; gap:6px; justify-content:center; padding:0 5% 48px; flex-wrap:wrap; }
+.pg-btn { background:var(--c-surface); border:1px solid var(--c-border); width:36px; height:36px; border-radius:4px; font-size:.82rem; font-weight:600; cursor:pointer; color:var(--c-muted); transition:all .2s; }
+.pg-btn:hover { border-color:var(--c-accent); color:var(--c-accent); }
+.pg-btn.active { background:var(--c-accent2); color:#fff; border-color:var(--c-accent2); }
+.pg-btn.dots { cursor:default; border:none; background:none; }
+
+/* ══ FONT PICKER ══ */
+.font-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-bottom:20px; }
+.font-card { border:2px solid var(--c-border); border-radius:var(--radius-lg); padding:16px; cursor:pointer; transition:all .2s; background:var(--c-surface); text-align:center; }
+.font-card:hover { border-color:var(--c-accent); }
+.font-card.selected { border-color:var(--c-accent); background:rgba(193,127,62,.06); }
+.font-preview-head { font-size:1.3rem; font-weight:800; color:var(--c-text); margin-bottom:4px; }
+.font-preview-body { font-size:.75rem; color:var(--c-muted); }
+.font-name { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--c-accent); margin-top:6px; }
+
+/* ══ REVIEW CARD HIGHLIGHTED ══ */
+.rev-card.highlighted { border-top-color:var(--c-accent); box-shadow:0 4px 20px rgba(193,127,62,.18); background:rgba(193,127,62,.03); }
+.rev-card.highlighted::before { content:'⭐ Featured'; font-size:.65rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--c-accent); display:block; margin-bottom:8px; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ NAV ════════════════════ -->
+<nav id="nav">
+  <!-- Hamburger on the LEFT (visible on mobile/tablet) -->
+  <button class="hamburger" id="hamburgerBtn" onclick="openDrawer()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-logo" onclick="showPage('products')">
+    <img id="logo-img-el" src="" alt="logo">
+    <div id="logo-text-el">Furniture <span>Mama</span></div>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="return navToProducts()" id="nav-products" class="active">Products</a></li>
+    <li><a href="#" onclick="return showPage('custom')" id="nav-custom">Customize</a></li>
+    <li><a href="#" onclick="return showPage('reviews')" id="nav-reviews">Reviews</a></li>
+    <li><a href="#" onclick="return showPage('blog')" id="nav-blog">Blog</a></li>
+    <li><a href="#" onclick="return showPage('policy')" id="nav-policy">Policies</a></li>
+  </ul>
+</nav>
+
+<!-- ── DRAWER OVERLAY ── -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- ── SLIDE-IN DRAWER ── -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-logo">Furniture <span>Mama</span></div>
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="Close menu">&#x2715;</button>
+  </div>
+  <div class="drawer-body">
+
+    <!-- Products (expandable) -->
+    <div class="drawer-item" id="di-products" onclick="toggleDrawerSection('products-sub', this)">
+      <span>🪑 Products</span>
+      <span class="drawer-arrow">&#8964;</span>
+    </div>
+    <div class="drawer-sub" id="products-sub">
+      <span class="drawer-sub-item" onclick="drawerNav('products')">🏠 All Products</span>
+      <span class="drawer-sub-item" id="drawer-cat-list"><!-- filled by JS --></span>
+    </div>
+
+    <!-- Customize -->
+    <div class="drawer-item" id="di-custom" onclick="drawerNav('custom')">
+      <span>✏️ Customize Order</span>
+    </div>
+
+    <!-- Reviews -->
+    <div class="drawer-item" id="di-reviews" onclick="drawerNav('reviews')">
+      <span>⭐ Reviews</span>
+    </div>
+
+    <!-- Blog -->
+    <div class="drawer-item" id="di-blog" onclick="drawerNav('blog')">
+      <span>📝 Blog</span>
+    </div>
+
+    <!-- Policies (expandable) -->
+    <div class="drawer-item" id="di-policy" onclick="toggleDrawerSection('policy-sub', this)">
+      <span>📋 Policies</span>
+      <span class="drawer-arrow">&#8964;</span>
+    </div>
+    <div class="drawer-sub" id="policy-sub">
+      <span class="drawer-sub-item" onclick="drawerNavPolicy('delivery')">🚚 Delivery Policy</span>
+      <span class="drawer-sub-item" onclick="drawerNavPolicy('returns')">🔄 Return & Exchange</span>
+    </div>
+
+  </div>
+  <div class="drawer-footer">
+    <button class="drawer-wa-btn" id="drawer-wa-btn" onclick="closeDrawer()">
+      💬 Chat on WhatsApp
+    </button>
+  </div>
+</div>
+
+<!-- Global Back Navigation Bar -->
+<div id="global-back-bar">
+  <button class="back-bar-btn" onclick="goBack()">← Back</button>
+  <div class="back-bar-crumb">Home <span style="margin:0 4px;color:var(--c-muted)">/</span> <span id="back-bar-label">Page</span></div>
+</div>
+
+<!-- ════════════════════ PAGE: PRODUCTS ════════════════════ -->
+<div id="page-products" class="page active">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-badge" id="h-badge">E Furniture Store</div>
+        <h1 id="h-title">Furniture that makes your home feel <em>more like home.</em></h1>
+        <p class="hero-sub" id="h-sub">Quality furniture, thoughtfully crafted for every space and budget. Explore our curated collection.</p>
+        <div class="hero-btns">
+          <button class="btn-cta" onclick="document.getElementById('prod-section').scrollIntoView({behavior:'smooth'})">Shop Now</button>
+          <button class="btn-ghost" onclick="showPage('custom')">Request Custom Order</button>
+        </div>
+        <div style="display:flex;gap:28px;margin-top:30px;padding-top:26px;border-top:1px solid rgba(255,255,255,0.1)">
+          <div>
+            <div style="font-size:1.35rem;font-weight:900;color:var(--c-accent);font-family:var(--font-head);line-height:1">500+</div>
+            <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.4);margin-top:4px">Happy Homes</div>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,0.1)"></div>
+          <div>
+            <div style="font-size:1.35rem;font-weight:900;color:var(--c-accent);font-family:var(--font-head);line-height:1">4.9★</div>
+            <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.4);margin-top:4px">Avg Rating</div>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,0.1)"></div>
+          <div>
+            <div style="font-size:1.35rem;font-weight:900;color:var(--c-accent);font-family:var(--font-head);line-height:1">24hrs</div>
+            <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.4);margin-top:4px">Quote Response</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-feat-grid" id="heroFeatGrid">
+        <div class="hero-feat-card"><div class="feat-placeholder">🪑</div></div>
+        <div class="hero-feat-card"><div class="feat-placeholder">🛋️</div></div>
+        <div class="hero-feat-card"><div class="feat-placeholder">🪵</div></div>
+        <div class="hero-feat-card"><div class="feat-placeholder">🛏️</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="prod-section">
+    <div class="sec-header">
+      <span class="sec-label">Our Collection</span>
+      <h2 class="sec-title">Browse by Category</h2>
+      <div class="sec-divider"></div>
+      <p class="sec-sub">Every piece crafted with care for your home.</p>
+    </div>
+    <div class="cat-strip" id="catStrip"></div>
+    <div class="prod-grid" id="prodGrid"></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="sec-wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="foot-brand-name" id="foot-brand">Furniture Mama</div>
+          <p class="foot-brand-desc" id="foot-desc">Crafting comfort and style for homes everywhere. Quality furniture, custom orders, doorstep delivery.</p>
+        </div>
+        <div class="foot-col">
+          <h4>Navigation</h4>
+          <a onclick="return showPage('products')">Products</a>
+          <a onclick="return showPage('custom')">Custom Orders</a>
+          <a onclick="return showPage('reviews')">Reviews</a>
+          <a onclick="return showPage('blog')">Blog</a>
+          <a onclick="return showPage('policy')">Policies</a>
+        </div>
+        <div class="foot-col">
+          <h4>Contact</h4>
+          <a id="foot-addr">📍 Dhaka, Bangladesh</a>
+          <a id="foot-wa" href="#" style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:#fff;padding:10px 16px;border-radius:2px;font-size:.78rem;font-weight:700;margin-top:4px;transition:background .2s" onmouseover="this.style.background='#1EAD58'" onmouseout="this.style.background='#25D366'">💬 Chat on WhatsApp</a>
+          <!-- Social icons: Instagram, Facebook, LinkedIn -->
+          <div class="foot-socials" style="margin-top:16px">
+            <a class="foot-social-icon" id="foot-ig-icon" href="#" target="_blank" title="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a class="foot-social-icon" id="foot-fb-icon" href="#" target="_blank" title="Facebook">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a class="foot-social-icon" id="foot-li-icon" href="#" target="_blank" title="LinkedIn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span id="foot-copy">© 2025 Furniture Mama. All rights reserved.</span>
+        <span>Made with ❤️ in Bangladesh</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+
+<!-- ════════════════════ PAGE: PRODUCT DETAIL ════════════════════ -->
+<div id="page-product-detail" class="page">
+  <div class="pd-wrap">
+    <button class="pd-back" onclick="showPage('products')">← Back to Products</button>
+    <div class="pd-grid">
+      <div class="pd-imgs">
+        <div class="pd-main-img" id="pd-main-img">
+          <div class="no-img-lg">🪑</div>
+        </div>
+        <div class="pd-thumbs" id="pd-thumbs"></div>
+      </div>
+      <div class="pd-info">
+        <span class="pd-cat-tag" id="pd-cat"></span>
+        <h1 class="pd-name" id="pd-name">Product Name</h1>
+        <div class="pd-price" id="pd-price">৳0</div>
+        <p class="pd-desc" id="pd-desc"></p>
+        <div class="pd-section" id="pd-dims-sec" style="display:none">
+          <div class="pd-section-title">📐 Dimensions</div>
+          <div class="pd-specs" id="pd-dims-grid"></div>
+        </div>
+        <div class="pd-section" id="pd-mat-sec" style="display:none">
+          <div class="pd-section-title">🪵 Materials</div>
+          <div class="pd-materials" id="pd-mats"></div>
+        </div>
+        <div class="pd-section" id="pd-extra-sec" style="display:none">
+          <div class="pd-section-title">ℹ️ Additional Details</div>
+          <p id="pd-extra" style="font-size:.88rem;color:var(--c-muted);line-height:1.8"></p>
+        </div>
+        <a class="pd-wa-btn" id="pd-wa-order" href="#" target="_blank">
+          💬 Buy Now via WhatsApp
+        </a>
+        <a class="pd-wa-secondary" id="pd-wa-inquiry" href="#" target="_blank">
+          💬 Ask Us Anything
+        </a>
+      </div>
+    </div>
+    <!-- Related / More from this category -->
+    <div class="pd-related" id="pd-related" style="display:none">
+      <div class="pd-related-title" id="pd-related-title">More in this Category</div>
+      <div class="pd-related-grid" id="pd-related-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ PAGE: CUSTOMISE ════════════════════ -->
+<div id="page-custom" class="page">
+  <div class="pg-banner">
+    <span class="sec-label" style="color:var(--c-accent)">Bespoke Furniture</span>
+    <h2>Design It Your Way</h2>
+    <p>Share your vision — our team will craft a custom price quote for you.</p>
+  </div>
+  <div class="form-wrap">
+    <div class="form-card">
+      <h3>Submit Your Custom Request</h3>
+      <div class="fg-row">
+        <div class="fg"><label>Full Name *</label><input type="text" id="c-name" placeholder="Your name"></div>
+        <div class="fg"><label>WhatsApp / Phone *</label><input type="tel" id="c-phone" placeholder="+880 1XXX XXX XXX"></div>
+      </div>
+      <div class="fg"><label>Email</label><input type="email" id="c-email" placeholder="your@email.com"></div>
+      <div class="fg">
+        <label>Furniture Type *</label>
+        <select id="c-type">
+          <option value="">Select…</option>
+          <option>Chair</option><option>Table / Desk</option><option>Sofa / Couch</option>
+          <option>Bed / Headboard</option><option>Wardrobe / Cabinet</option>
+          <option>Shelf / Rack</option><option>Office Furniture</option>
+          <option>Kids Furniture</option><option>Outdoor Furniture</option><option>Other</option>
+        </select>
+      </div>
+      <div class="fg-row">
+        <div class="fg">
+          <label>Material Preference</label>
+          <select id="c-material">
+            <option value="">No preference</option>
+            <option>Teak Wood</option><option>Mahogany</option><option>Oak</option>
+            <option>Plywood</option><option>Metal Frame</option><option>Mixed</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Budget (BDT)</label>
+          <select id="c-budget">
+            <option value="">Select range</option>
+            <option>Under ৳5,000</option><option>৳5,000–৳15,000</option>
+            <option>৳15,000–৳30,000</option><option>৳30,000–৳60,000</option><option>৳60,000+</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg"><label>Dimensions (if known)</label><input type="text" id="c-dims" placeholder="e.g. 120cm × 60cm × 75cm"></div>
+      <div class="fg"><label>Describe Your Vision *</label><textarea id="c-desc" placeholder="Style, colors, usage, inspiration…"></textarea></div>
+      <div class="fg">
+        <label>Reference Images</label>
+        <div class="upload-zone">
+          <input type="file" id="c-imgs" multiple accept="image/*" onchange="previewUploads(this)">
+          <div style="font-size:2rem;margin-bottom:8px">📷</div>
+          <p>Drag & drop or <span>browse files</span></p>
+          <p style="font-size:.72rem;margin-top:4px;color:var(--c-muted)">PNG, JPG up to 5MB each</p>
+        </div>
+        <div class="upload-preview" id="uploadPrev"></div>
+      </div>
+      <button class="form-submit" onclick="submitCustom()">Send Request for Quotation →</button>
+      <div class="success-msg" id="customOk">✅ Request submitted! We'll contact you within 24 hours.</div>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card"><div class="step-icon">📝</div><div class="step-title">Submit Form</div><div class="step-sub">Fill your details & upload reference images</div></div>
+      <div class="step-card"><div class="step-icon">🔍</div><div class="step-title">We Analyse</div><div class="step-sub">Team reviews your design & requirements</div></div>
+      <div class="step-card"><div class="step-icon">💬</div><div class="step-title">Get Quote</div><div class="step-sub">Receive a detailed price quotation</div></div>
+      <div class="step-card"><div class="step-icon">🪑</div><div class="step-title">We Craft</div><div class="step-sub">Approve & your dream piece gets made</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ PAGE: REVIEWS ════════════════════ -->
+<div id="page-reviews" class="page">
+  <div class="pg-banner">
+    <span class="sec-label" style="color:var(--c-accent)">Customer Stories</span>
+    <h2>What Our Customers Say</h2>
+    <p>Real reviews from real homes across Bangladesh.</p>
+  </div>
+  <div class="rev-stats">
+    <div class="rev-stat"><div class="rev-stat-num" id="stat-rev">0</div><div class="rev-stat-lbl">Reviews</div></div>
+    <div class="rev-stat"><div class="rev-stat-num" id="stat-avg">0★</div><div class="rev-stat-lbl">Avg Rating</div></div>
+    <div class="rev-stat"><div class="rev-stat-num">500+</div><div class="rev-stat-lbl">Happy Homes</div></div>
+    <div class="rev-stat"><div class="rev-stat-num">100%</div><div class="rev-stat-lbl">Satisfaction</div></div>
+  </div>
+  <div class="sec-header">
+    <span class="sec-label">Verified Reviews</span>
+    <h2 class="sec-title">Customer Experiences</h2>
+    <div class="sec-divider"></div>
+  </div>
+  <button class="write-rev-btn" onclick="openRevModal()">Write a Review +</button>
+  <div class="rev-grid" id="revGrid"></div>
+</div>
+
+<!-- Review Modal -->
+<div class="modal-bg" id="revModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeRevModal()">✕</button>
+    <h3>Share Your Experience</h3>
+    <div class="fg"><label>Your Name *</label><input type="text" id="r-name" placeholder="Your name"></div>
+    <div class="fg"><label>Product Purchased</label><input type="text" id="r-prod" placeholder="e.g. Teak Dining Table"></div>
+    <div class="fg">
+      <label>Rating *</label>
+      <div class="star-row" id="starRow">
+        <span onclick="setRating(1)">★</span><span onclick="setRating(2)">★</span>
+        <span onclick="setRating(3)">★</span><span onclick="setRating(4)">★</span><span onclick="setRating(5)">★</span>
+      </div>
+    </div>
+    <div class="fg"><label>Your Review *</label><textarea id="r-text" style="min-height:80px" placeholder="Tell others about your experience…"></textarea></div>
+    <button class="form-submit" onclick="submitReview()">Submit Review</button>
+  </div>
+</div>
+
+<!-- ════════════════════ PAGE: BLOG ════════════════════ -->
+<div id="page-blog" class="page">
+  <div class="pg-banner" style="background:var(--c-accent2)">
+    <span class="sec-label" style="color:var(--c-accent)">Furniture Insights</span>
+    <h2>The Furniture Mama Blog</h2>
+    <p>Tips, trends, and home inspiration.</p>
+  </div>
+  <div id="blogListWrap">
+    <div class="sec-header">
+      <span class="sec-label">Latest Posts</span>
+      <h2 class="sec-title">Read & Inspire</h2>
+      <div class="sec-divider"></div>
+    </div>
+    <div class="blog-grid" id="blogGrid"></div>
+  </div>
+  <div class="blog-detail" id="blogDetail">
+    <button class="back-link" onclick="closeBlogDetail()">← Back to Blog</button>
+    <span class="blog-cat-tag" id="bd-cat"></span>
+    <h1 id="bd-title"></h1>
+    <div style="font-size:.75rem;color:var(--c-muted);margin-top:6px" id="bd-meta"></div>
+    <hr style="border:none;border-top:1px solid var(--c-border);margin:18px 0">
+    <div class="blog-detail-body" id="bd-body"></div>
+  </div>
+</div>
+
+<!-- ════════════════════ PAGE: POLICY ════════════════════ -->
+<div id="page-policy" class="page">
+  <div class="pg-banner">
+    <span class="sec-label" style="color:var(--c-accent)">Transparency</span>
+    <h2>Our Policies</h2>
+    <p>Clear and fair policies so you can shop with confidence.</p>
+  </div>
+  <div class="policy-wrap">
+    <div class="policy-tabs">
+      <button class="policy-tab active" onclick="switchPolicy('delivery',this)">🚚 Delivery</button>
+      <button class="policy-tab" onclick="switchPolicy('returns',this)">🔄 Return & Exchange</button>
+    </div>
+    <div class="policy-pane active" id="pol-delivery">
+      <h2 id="pol-del-title">Delivery Policy</h2>
+      <div class="policy-updated" id="pol-del-updated">Last updated: January 2025</div>
+      <div class="policy-sec"><h3>📍 Delivery Areas</h3><p id="pol-del-areas">We currently deliver to all areas within Dhaka city and surrounding districts. Deliveries outside Dhaka can be arranged on request — contact us via WhatsApp.</p></div>
+      <div class="policy-sec"><h3>⏱️ Delivery Timeframes</h3><ul id="pol-del-times"><li><strong>In-stock items:</strong> 3–5 working days.</li><li><strong>Custom orders:</strong> 7–21 working days production + delivery.</li><li><strong>Large items:</strong> Our team will call to schedule.</li></ul><div class="policy-note">We'll notify you via WhatsApp once your order is ready.</div></div>
+      <div class="policy-sec"><h3>💰 Delivery Charges</h3><ul id="pol-del-charges"><li>Dhaka city: ৳300–৳800 based on size & location.</li><li>Outside Dhaka: Quoted before confirmation.</li><li>Orders above ৳50,000: Free delivery within Dhaka.</li></ul></div>
+      <div class="policy-sec"><h3>⚠️ Damaged in Transit</h3><p id="pol-del-damage">Report transit damage with photos within 24 hours. We'll arrange replacement or repair at no cost.</p></div>
+    </div>
+    <div class="policy-pane" id="pol-returns">
+      <h2 id="pol-ret-title">Return & Exchange Policy</h2>
+      <div class="policy-updated" id="pol-ret-updated">Last updated: January 2025</div>
+      <div class="policy-sec"><h3>✅ Eligibility</h3><p id="pol-ret-elig">Returns accepted within 7 days if item received is significantly different from order, has a manufacturing defect, or is in unused original condition.</p></div>
+      <div class="policy-sec"><h3>❌ Not Eligible</h3><ul id="pol-ret-noelig"><li>Custom-made or personalised items.</li><li>Items used, assembled incorrectly or damaged after delivery.</li><li>Returns after 7 days.</li><li>Final sale items.</li></ul><div class="policy-note">Custom furniture cannot be returned unless there is a manufacturing defect.</div></div>
+      <div class="policy-sec"><h3>🔄 How to Return</h3><p id="pol-ret-how">WhatsApp us within 7 days with photos. We assess within 48 hours and arrange free pickup if eligible.</p></div>
+      <div class="policy-sec"><h3>💳 Refunds</h3><p id="pol-ret-refund">Refunds issued within 7–10 working days via original payment method. Delivery charges non-refundable unless error on our side.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ ADMIN OVERLAY ════════════════════ -->
+<div id="admin-overlay">
+  <!-- Login -->
+  <div class="adm-login-wrap" id="admLogin">
+    <div class="adm-login-box">
+      <!-- Step 1: credentials -->
+      <div id="login-step-1">
+        <div style="font-size:2.5rem;margin-bottom:8px">🔒</div>
+        <h2>Admin Access</h2>
+        <p>Furniture Mama Management Panel</p>
+        <input type="text" id="adm-user" placeholder="Username" autocomplete="off">
+        <input type="password" id="adm-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="adm-login-btn" onclick="doLogin()">Continue →</button>
+        <div class="adm-login-err" id="admErr">Invalid credentials.</div>
+      </div>
+      <!-- Step 2: OTP -->
+      <div id="login-step-2" style="display:none">
+        <div style="font-size:2.5rem;margin-bottom:8px">📧</div>
+        <h2>OTP Verification</h2>
+        <p id="otp-hint" style="font-size:.82rem;color:var(--c-muted);margin-bottom:16px">A 6-digit code has been sent to your email.</p>
+        <input type="text" id="otp-input" placeholder="Enter 6-digit code" maxlength="6" autocomplete="off"
+          style="letter-spacing:6px;font-size:1.2rem;text-align:center;font-weight:700"
+          onkeydown="if(event.key==='Enter')verifyOtp()">
+        <button class="adm-login-btn" onclick="verifyOtp()">Verify & Login →</button>
+        <div class="adm-login-err" id="otpErr">Incorrect code. Please try again.</div>
+        <button onclick="resendOtp()" style="background:none;border:none;color:var(--c-accent);font-size:.78rem;cursor:pointer;margin-top:8px;text-decoration:underline">Resend code</button>
+        <button onclick="resetLoginSteps()" style="background:none;border:none;color:var(--c-muted);font-size:.78rem;cursor:pointer;margin-top:4px;display:block">← Back</button>
+      </div>
+      <!-- Step 2b: No email set — fallback -->
+      <div id="login-step-noemail" style="display:none">
+        <div style="font-size:2.5rem;margin-bottom:8px">⚠️</div>
+        <h2>Set Admin Email First</h2>
+        <p style="font-size:.82rem;color:var(--c-muted);margin-bottom:16px;line-height:1.6">To use OTP login, first go to <strong>Settings → Admin Email</strong> and save your email address.</p>
+        <button class="adm-login-btn" onclick="bypassOtpLogin()">Enter Without OTP →</button>
+        <button onclick="resetLoginSteps()" style="background:none;border:none;color:var(--c-muted);font-size:.78rem;cursor:pointer;margin-top:8px;display:block">← Back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel -->
+  <div class="adm-panel" id="admPanel">
+    <div class="adm-sidebar">
+      <div class="adm-sidebar-logo">Furniture Mama <span>Admin Panel</span></div>
+      <div class="adm-nav">
+        <div class="adm-nav-item active" onclick="switchTab('dashboard',this)">📊 Dashboard</div>
+        <div class="adm-nav-item" onclick="switchTab('products',this)">🪑 Products</div>
+        <div class="adm-nav-item" onclick="switchTab('categories',this)">🏷️ Categories</div>
+        <div class="adm-nav-item" onclick="switchTab('requests',this)">📨 Custom Requests</div>
+        <div class="adm-nav-item" onclick="switchTab('reviews-adm',this)">⭐ Reviews</div>
+        <div class="adm-nav-item" onclick="switchTab('blogs',this)">📝 Blog Posts</div>
+        <div class="adm-nav-item" onclick="switchTab('policies',this)">📋 Policies</div>
+        <div class="adm-nav-item" onclick="switchTab('appearance',this)">🎨 Appearance</div>
+        <div class="adm-nav-item" onclick="switchTab('settings',this)">⚙️ Settings</div>
+      </div>
+      <div class="adm-logout" onclick="doLogout()">🚪 Logout</div>
+    </div>
+    <div class="adm-main">
+      <div class="adm-topbar">
+        <h2 id="admTabTitle">Dashboard</h2>
+        <button class="adm-add-btn" id="admAddBtn" style="display:none">+ Add New</button>
+      </div>
+      <div class="adm-content">
+
+        <!-- DASHBOARD -->
+        <div class="adm-tab active" id="tab-dashboard">
+          <div class="adm-stats" id="dashStats"></div>
+          <div class="adm-card"><div class="adm-card-title">Recent Custom Requests</div><div id="dashRequests"></div></div>
+        </div>
+
+        <!-- PRODUCTS -->
+        <div class="adm-tab" id="tab-products">
+          <div class="adm-card">
+            <table class="adm-tbl"><thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Badge</th><th>Actions</th></tr></thead>
+            <tbody id="prodTbody"></tbody></table>
+          </div>
+        </div>
+
+        <!-- CATEGORIES -->
+        <div class="adm-tab" id="tab-categories">
+          <div class="adm-card">
+            <table class="adm-tbl"><thead><tr><th>Icon</th><th>Name</th><th>Actions</th></tr></thead>
+            <tbody id="catTbody"></tbody></table>
+          </div>
+        </div>
+
+        <!-- REQUESTS -->
+        <div class="adm-tab" id="tab-requests">
+          <div class="adm-card">
+            <table class="adm-tbl"><thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Type</th><th>Budget</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="reqTbody"></tbody></table>
+          </div>
+        </div>
+
+        <!-- REVIEWS ADM -->
+        <div class="adm-tab" id="tab-reviews-adm">
+          <div class="adm-card">
+            <div class="adm-card-title">✍️ Post a Review (as Admin)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+              <div class="fg"><label>Customer Name</label><input type="text" id="ar-name" placeholder="e.g. Rahim Ahmed"></div>
+              <div class="fg"><label>Product</label><input type="text" id="ar-prod" placeholder="e.g. Teak Dining Table"></div>
+            </div>
+            <div class="fg" style="margin-bottom:12px">
+              <label>Rating</label>
+              <div style="display:flex;gap:6px;margin-top:4px" id="ar-stars">
+                <span onclick="setAdminRating(1)" style="font-size:1.4rem;cursor:pointer;color:#DDD">★</span>
+                <span onclick="setAdminRating(2)" style="font-size:1.4rem;cursor:pointer;color:#DDD">★</span>
+                <span onclick="setAdminRating(3)" style="font-size:1.4rem;cursor:pointer;color:#DDD">★</span>
+                <span onclick="setAdminRating(4)" style="font-size:1.4rem;cursor:pointer;color:#DDD">★</span>
+                <span onclick="setAdminRating(5)" style="font-size:1.4rem;cursor:pointer;color:#DDD">★</span>
+              </div>
+            </div>
+            <div class="fg" style="margin-bottom:12px"><label>Review Text</label><textarea id="ar-text" style="min-height:80px" placeholder="Write the customer review…"></textarea></div>
+            <button class="adm-save-btn" onclick="postAdminReview()">Post Review</button>
+          </div>
+          <div class="adm-card">
+            <div class="adm-card-title">📋 All Reviews — Highlight or Remove</div>
+            <table class="adm-tbl"><thead><tr><th>Name</th><th>Product</th><th>Stars</th><th>Review</th><th>Date</th><th>Featured</th><th>Actions</th></tr></thead>
+            <tbody id="revTbody"></tbody></table>
+          </div>
+        </div>
+
+        <!-- BLOGS -->
+        <div class="adm-tab" id="tab-blogs">
+          <div class="adm-card">
+            <table class="adm-tbl"><thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="blogTbody"></tbody></table>
+          </div>
+        </div>
+
+        <!-- POLICIES -->
+        <div class="adm-tab" id="tab-policies">
+          <div class="adm-card">
+            <div class="adm-card-title">🚚 Delivery Policy</div>
+            <div class="fg"><label>Section Title</label><input type="text" id="pp-del-title" placeholder="Delivery Policy"></div>
+            <div class="fg"><label>Last Updated Text</label><input type="text" id="pp-del-updated" placeholder="Last updated: January 2025"></div>
+            <div class="fg"><label>Delivery Areas (paragraph)</label><textarea id="pp-del-areas" style="min-height:80px"></textarea></div>
+            <div class="fg"><label>Delivery Charges (one per line)</label><textarea id="pp-del-charges" style="min-height:80px"></textarea></div>
+            <div class="fg"><label>Damaged in Transit (paragraph)</label><textarea id="pp-del-damage" style="min-height:70px"></textarea></div>
+          </div>
+          <div class="adm-card">
+            <div class="adm-card-title">🔄 Return & Exchange Policy</div>
+            <div class="fg"><label>Section Title</label><input type="text" id="pp-ret-title" placeholder="Return & Exchange Policy"></div>
+            <div class="fg"><label>Last Updated Text</label><input type="text" id="pp-ret-updated" placeholder="Last updated: January 2025"></div>
+            <div class="fg"><label>Eligibility (paragraph)</label><textarea id="pp-ret-elig" style="min-height:80px"></textarea></div>
+            <div class="fg"><label>Not Eligible (one item per line)</label><textarea id="pp-ret-noelig" style="min-height:80px"></textarea></div>
+            <div class="fg"><label>How to Return (paragraph)</label><textarea id="pp-ret-how" style="min-height:70px"></textarea></div>
+            <div class="fg"><label>Refunds (paragraph)</label><textarea id="pp-ret-refund" style="min-height:70px"></textarea></div>
+          </div>
+          <button class="adm-save-btn" onclick="savePolicies()">💾 Save Policies</button>
+        </div>
+
+        <!-- APPEARANCE -->
+        <div class="adm-tab" id="tab-appearance">
+          <!-- Hero Featured Products -->
+          <div class="adm-card">
+            <div class="adm-card-title">🖼️ Hero Featured Products (4 Spotlight Items)</div>
+            <p style="font-size:.82rem;color:var(--c-muted);margin-bottom:14px;line-height:1.6">Choose exactly 4 products to feature in the homepage hero section. Click a product to toggle it on/off.</p>
+            <div id="feat-picker" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;max-height:320px;overflow-y:auto;padding:4px"></div>
+            <p style="font-size:.75rem;color:var(--c-muted);margin-top:10px" id="feat-count-msg">0 / 4 selected</p>
+            <button class="adm-save-btn" style="margin-top:12px" onclick="saveFeatured()">Save Featured Products</button>
+          </div>
+          <!-- Font Picker -->
+          <div class="adm-card">
+            <div class="adm-card-title">🔤 Website Font</div>
+            <p style="font-size:.82rem;color:var(--c-muted);margin-bottom:16px">Click a font to preview it live, then click Save Font to apply.</p>
+            <div class="font-grid" id="fontGrid"></div>
+            <button class="adm-save-btn" onclick="saveFont()">Apply Selected Font</button>
+          </div>
+          <!-- Logo -->
+          <div class="adm-card">
+            <div class="adm-card-title">🏠 Brand & Logo</div>
+            <div class="fg"><label>Brand Name</label><input type="text" id="ap-brand" placeholder="Furniture Mama"></div>
+            <div class="fg">
+              <label>Logo Image (upload — displayed large in nav)</label>
+              <div class="logo-preview-big" id="ap-logo-preview"><span>No logo uploaded</span></div>
+              <input type="file" id="ap-logo-file" accept="image/*" onchange="previewLogo(this)">
+              <div style="margin-top:8px;display:flex;gap:8px">
+                <button class="adm-save-btn" onclick="saveLogo()">Upload Logo</button>
+                <button class="btn-del" onclick="clearLogo()">Remove Logo</button>
+              </div>
+            </div>
+            <div class="fg"><label>Footer Tagline</label><textarea id="ap-foot-desc" style="min-height:60px"></textarea></div>
+          </div>
+          <!-- Hero text -->
+          <div class="adm-card">
+            <div class="adm-card-title">🦸 Hero Text</div>
+            <div class="fg"><label>Badge Label (above title)</label><input type="text" id="ap-badge" placeholder="E Furniture Store"></div>
+            <div class="fg"><label>Hero Title (use | for line break, *word* for accent color)</label><input type="text" id="ap-title" placeholder="Furniture that makes your|home feel *more like home.*"></div>
+            <div class="fg"><label>Hero Subtitle</label><input type="text" id="ap-sub" placeholder="Quality furniture…"></div>
+          </div>
+          <!-- Color palette -->
+          <div class="adm-card">
+            <div class="adm-card-title">🎨 Color Palette — Click any color to change it</div>
+            <div class="color-grid">
+              <div class="color-row"><label>Page Background</label><input type="color" id="col-bg" oninput="liveColor('--c-bg',this.value)"></div>
+              <div class="color-row"><label>Surface (cards)</label><input type="color" id="col-surface" oninput="liveColor('--c-surface',this.value)"></div>
+              <div class="color-row"><label>Main Text</label><input type="color" id="col-text" oninput="liveColor('--c-text',this.value)"></div>
+              <div class="color-row"><label>Accent / Brand Color</label><input type="color" id="col-accent" oninput="liveColor('--c-accent',this.value)"></div>
+              <div class="color-row"><label>Dark Accent</label><input type="color" id="col-accent2" oninput="liveColor('--c-accent2',this.value)"></div>
+              <div class="color-row"><label>CTA Button</label><input type="color" id="col-cta" oninput="liveColor('--c-cta',this.value)"></div>
+              <div class="color-row"><label>CTA Text</label><input type="color" id="col-cta-text" oninput="liveColor('--c-cta-text',this.value)"></div>
+              <div class="color-row"><label>Nav Background</label><input type="color" id="col-nav-bg" oninput="liveColor('--c-nav-bg',this.value)"></div>
+              <div class="color-row"><label>Hero Background</label><input type="color" id="col-hero-bg" oninput="liveColor('--c-hero-bg',this.value)"></div>
+              <div class="color-row"><label>Footer Background</label><input type="color" id="col-footer-bg" oninput="liveColor('--c-footer-bg',this.value)"></div>
+              <div class="color-row"><label>Border Color</label><input type="color" id="col-border" oninput="liveColor('--c-border',this.value)"></div>
+              <div class="color-row"><label>Muted Text</label><input type="color" id="col-muted" oninput="liveColor('--c-muted',this.value)"></div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="adm-save-btn" onclick="saveAppearance()">💾 Save All Appearance</button>
+              <button class="btn-del" onclick="resetColors()">Reset Colors to Default</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="adm-tab" id="tab-settings">
+          <div class="adm-card">
+            <div class="adm-card-title">📱 WhatsApp & Social Links</div>
+            <div class="fg"><label>WhatsApp Number</label><input type="tel" id="s-wa" placeholder="01628340463" oninput="this.value=this.value.replace(/[^0-9]/g,'')"><small style="color:var(--c-muted);font-size:.75rem;margin-top:4px;display:block">✅ Enter your BD number: <strong>01628340463</strong> — country code 880 is added automatically.</small></div>
+            <div class="fg"><label>Instagram URL</label><input type="text" id="s-ig" placeholder="https://www.instagram.com/furniture_maama/"></div>
+            <div class="fg"><label>Facebook URL</label><input type="text" id="s-fb" placeholder="https://www.facebook.com/..."></div>
+            <div class="fg"><label>LinkedIn URL</label><input type="text" id="s-linkedin" placeholder="https://www.linkedin.com/company/..."></div>
+            <div class="fg"><label>Address</label><input type="text" id="s-addr" placeholder="Dhaka, Bangladesh"></div>
+            <button class="adm-save-btn" onclick="saveSettings()">Save Settings</button>
+          </div>
+          <div class="adm-card" style="margin-top:16px">
+            <div class="adm-card-title">📧 Admin Email (for OTP Login)</div>
+            <div class="fg">
+              <label>Admin Email Address</label>
+              <input type="email" id="s-admin-email" placeholder="your@email.com">
+              <small style="color:var(--c-muted);font-size:.75rem;margin-top:4px;display:block">This email receives the OTP code every time you log into the admin panel. Uses EmailJS — configure your EmailJS Service ID and Template ID below.</small>
+            </div>
+            <div class="fg-row">
+              <div class="fg"><label>EmailJS Service ID</label><input type="text" id="s-ejs-service" placeholder="service_xxxxxxx"></div>
+              <div class="fg"><label>EmailJS Template ID</label><input type="text" id="s-ejs-template" placeholder="template_xxxxxxx"></div>
+            </div>
+            <div class="fg"><label>EmailJS Public Key</label><input type="text" id="s-ejs-key" placeholder="your_public_key"></div>
+            <div style="background:var(--c-bg);border-radius:6px;padding:12px;font-size:.78rem;color:var(--c-muted);line-height:1.7;margin-bottom:12px">
+              <strong style="color:var(--c-text)">How to set up EmailJS (free):</strong><br>
+              1. Go to <strong>emailjs.com</strong> → Create free account<br>
+              2. Add Email Service → copy <strong>Service ID</strong><br>
+              3. Create Email Template with variables: <code>{{otp_code}}</code>, <code>{{to_email}}</code> → copy <strong>Template ID</strong><br>
+              4. Account → API Keys → copy <strong>Public Key</strong><br>
+              5. Fill above fields and Save Settings ✅
+            </div>
+            <button class="adm-save-btn" onclick="saveSettings()">Save Email Settings</button>
+          </div>
+          <div class="adm-card" style="margin-top:16px">
+            <div class="adm-card-title">🔑 Change Admin Password</div>
+            <div class="fg"><label>New Password</label><input type="password" id="s-newpass"></div>
+            <button class="adm-save-btn" onclick="changePass()">Update Password</button>
+          </div>
+          <div class="adm-card" style="margin-top:16px;border:2px solid var(--c-accent)">
+            <div class="adm-card-title" style="color:var(--c-accent)">🌐 Sync to All Devices (GitHub)</div>
+            <p style="font-size:.82rem;color:var(--c-muted);margin-bottom:6px;line-height:1.7"><strong style="color:var(--c-text)">Why phone doesn't update:</strong> Your admin changes save only in <em>this browser</em>. To make changes visible on all devices (phone, other browsers, other people), you must re-upload the file to GitHub.</p>
+            <div style="background:var(--c-bg);border-radius:6px;padding:14px;margin:10px 0;font-size:.8rem;color:var(--c-text);line-height:1.9">
+              <strong>How to sync to all devices:</strong><br>
+              1. Click <strong>💾 Export Backup</strong> — saves your data as a .json file<br>
+              2. Click <strong>📥 Download Updated Site</strong> — downloads index.html with your data baked in<br>
+              3. Upload that index.html to your GitHub repo (replace old one)<br>
+              4. All devices will see the updated site within 1–2 minutes ✅
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+              <button class="adm-save-btn" style="background:var(--c-accent)" onclick="downloadUpdatedSite()">📥 Download Updated Site</button>
+              <button class="adm-save-btn" onclick="exportData()">💾 Export Backup</button>
+              <button class="adm-add-btn" onclick="importData()">📂 Import Backup</button>
+              <button class="btn-del" onclick="resetData()">🗑️ Reset All Data</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN MODALS -->
+<div class="adm-modal" id="prodModal">
+  <div class="adm-modal-box" style="max-width:640px">
+    <h3 id="pm-h">Add Product</h3><input type="hidden" id="pm-id">
+    <div class="fg"><label>Name *</label><input type="text" id="pm-name" placeholder="e.g. Classic Teak Arm Chair"></div>
+    <div class="fg"><label>Category *</label><select id="pm-cat"></select></div>
+    <div class="fg-row">
+      <div class="fg"><label>Price (BDT) *</label><input type="number" id="pm-price" placeholder="15000"></div>
+      <div class="fg"><label>Badge</label><input type="text" id="pm-badge" placeholder="New / Sale / Bestseller"></div>
+    </div>
+    <div class="fg"><label>Short Description</label><textarea id="pm-desc" style="min-height:70px" placeholder="Brief overview shown on product card and detail page"></textarea></div>
+    <div class="fg"><label>Additional Details (shown on product detail page only)</label><textarea id="pm-extra" style="min-height:60px" placeholder="Warranty info, assembly notes, care instructions…"></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div class="fg"><label>Width</label><input type="text" id="pm-width" placeholder="e.g. 120 cm"></div>
+      <div class="fg"><label>Height</label><input type="text" id="pm-height" placeholder="e.g. 75 cm"></div>
+      <div class="fg"><label>Depth / Length</label><input type="text" id="pm-depth" placeholder="e.g. 60 cm"></div>
+    </div>
+    <div class="fg"><label>Weight</label><input type="text" id="pm-weight" placeholder="e.g. 12 kg — optional"></div>
+    <div class="fg"><label>Materials (comma separated)</label><input type="text" id="pm-mats" placeholder="e.g. Teak Wood, Stainless Steel, High-density Foam"></div>
+    <div class="fg">
+      <label>Main Image (shown on product card)</label>
+      <input type="file" id="pm-img" accept="image/*" onchange="prevAdminImg(this,'pm-img-prev')">
+      <div class="img-prev-wrap" id="pm-img-prev"></div>
+    </div>
+    <div class="fg">
+      <label>Extra Images — up to 3 more (shown on product detail page)</label>
+      <input type="file" id="pm-imgs-extra" accept="image/*" multiple onchange="prevExtraImgs(this)">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px" id="pm-extra-prevs"></div>
+    </div>
+    <div class="adm-modal-actions">
+      <button class="adm-cancel-btn" onclick="closeAdmModal('prodModal')">Cancel</button>
+      <button class="adm-save-btn" onclick="saveProd()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<div class="adm-modal" id="catModal">
+  <div class="adm-modal-box">
+    <h3 id="cm-h">Add Category</h3><input type="hidden" id="cm-id">
+    <div class="fg"><label>Name *</label><input type="text" id="cm-name"></div>
+    <div class="fg"><label>Icon (emoji) — Optional</label><input type="text" id="cm-icon" placeholder="Leave blank for no icon"></div>
+    <div class="adm-modal-actions">
+      <button class="adm-cancel-btn" onclick="closeAdmModal('catModal')">Cancel</button>
+      <button class="adm-save-btn" onclick="saveCat()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="adm-modal" id="blogModal">
+  <div class="adm-modal-box">
+    <h3 id="bm-h">Add Blog Post</h3><input type="hidden" id="bm-id">
+    <div class="fg"><label>Title *</label><input type="text" id="bm-title"></div>
+    <div class="fg-row">
+      <div class="fg"><label>Category</label><input type="text" id="bm-cat" placeholder="Tips / Trends"></div>
+      <div class="fg"><label>Author</label><input type="text" id="bm-author" placeholder="Furniture Mama Team"></div>
+    </div>
+    <div class="fg"><label>Excerpt</label><textarea id="bm-excerpt" style="min-height:60px"></textarea></div>
+    <div class="fg"><label>Full Content *</label><textarea id="bm-body" style="min-height:160px"></textarea></div>
+    <div class="fg"><label>Cover Image</label><input type="file" id="bm-img" accept="image/*" onchange="prevAdminImg(this,'bm-img-prev')"><div class="img-prev-wrap" id="bm-img-prev"></div></div>
+    <div class="adm-modal-actions">
+      <button class="adm-cancel-btn" onclick="closeAdmModal('blogModal')">Cancel</button>
+      <button class="adm-save-btn" onclick="saveBlog()">Save Post</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+//  DATA LAYER
+// ═══════════════════════════════════════════
+const K={prods:'fm_prods',cats:'fm_cats',reqs:'fm_reqs',revs:'fm_revs',blogs:'fm_blogs',st:'fm_st',ap:'fm_ap',pol:'fm_pol'};
+const ld=k=>{try{return JSON.parse(localStorage.getItem(K[k]))||[]}catch{return[]}};
+const sv=(k,v)=>localStorage.setItem(K[k],JSON.stringify(v));
+const ldO=k=>{try{return JSON.parse(localStorage.getItem(K[k]))||{}}catch{return{}}};
+const svO=(k,v)=>localStorage.setItem(K[k],JSON.stringify(v));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).substr(2,5);
+
+// Default colors
+const DEFAULT_COLORS={
+  '--c-bg':'#F7F5F2','--c-surface':'#FFFFFF','--c-border':'#E4E0D8',
+  '--c-text':'#1A1714','--c-muted':'#7A7570','--c-accent':'#C17F3E',
+  '--c-accent2':'#2D2D2D','--c-cta':'#C17F3E','--c-cta-text':'#FFFFFF',
+  '--c-nav-bg':'#1A1714','--c-nav-text':'#FFFFFF','--c-hero-bg':'#1A1714',
+  '--c-hero-text':'#FFFFFF','--c-footer-bg':'#1A1714','--c-footer-text':'rgba(255,255,255,0.6)'
+};
+
+// ═══════════════════════════════════════════
+//  SEED DATA
+// ═══════════════════════════════════════════
+function seed(){
+  if(!ld('cats').length)sv('cats',[
+    {id:'c1',name:'Chairs',icon:'🪑'},{id:'c2',name:'Tables',icon:'🪵'},
+    {id:'c3',name:'Sofas',icon:'🛋️'},{id:'c4',name:'Beds',icon:'🛏️'},
+    {id:'c5',name:'Wardrobes',icon:'🗄️'},{id:'c6',name:'Office',icon:'💼'}
+  ]);
+  if(!ld('prods').length)sv('prods',[
+    {id:'p1',name:'Classic Teak Arm Chair',catId:'c1',price:12500,badge:'Bestseller',desc:'Solid teak wood with premium cushioning. Perfect for living rooms.',img:''},
+    {id:'p2',name:'Executive Office Chair',catId:'c6',price:18000,badge:'New',desc:'Ergonomic design with lumbar support. Ideal for long work hours.',img:''},
+    {id:'p3',name:'6-Seater Dining Table',catId:'c2',price:45000,badge:'',desc:'Handcrafted mahogany dining table with smooth finish.',img:''},
+    {id:'p4',name:'L-Shape Corner Sofa',catId:'c3',price:62000,badge:'Sale',desc:'Premium fabric upholstery, modular design fits any living room.',img:''},
+    {id:'p5',name:'King Size Platform Bed',catId:'c4',price:38000,badge:'',desc:'Solid wood frame with headboard. Supports standard mattress.',img:''},
+    {id:'p6',name:'3-Door Wardrobe',catId:'c5',price:28000,badge:'',desc:'Spacious wardrobe with mirror panel and smooth sliding doors.',img:''},
+    {id:'p7',name:'Coffee Table Set',catId:'c2',price:9500,badge:'New',desc:'Set of 3 nesting tables. Teak wood with glass top.',img:''},
+    {id:'p8',name:'Bar Stool (Set of 2)',catId:'c1',price:7500,badge:'',desc:'Modern bar stools with footrest. Adjustable height.',img:''}
+  ]);
+  if(!ld('revs').length)sv('revs',[
+    {id:'r1',name:'Rahim Chowdhury',prod:'Teak Dining Table',stars:5,text:'Absolutely stunning quality! The table is solid and looks gorgeous. Delivery was on time.',date:'12/05/2025'},
+    {id:'r2',name:'Fatema Begum',prod:'L-Shape Sofa',stars:5,text:'Best purchase this year! Very comfortable. Highly recommend Furniture Mama.',date:'02/06/2025'},
+    {id:'r3',name:'Karim Hassan',prod:'Office Chair',stars:4,text:'Good ergonomic chair. My back pain has reduced. Would love more colour options.',date:'18/06/2025'},
+    {id:'r4',name:'Nusrat Islam',prod:'Custom Wardrobe',stars:5,text:'Ordered a custom wardrobe — delivered perfectly. Top-notch craftsmanship.',date:'05/07/2025'}
+  ]);
+  if(!ld('blogs').length)sv('blogs',[
+    {id:'b1',title:'5 Tips to Choose the Perfect Dining Table',cat:'Tips',author:'Furniture Mama Team',excerpt:'Choosing a dining table is more than just picking a size.',body:'Choosing a dining table is one of the most important decisions for your dining room.\n\n1. Measure your space first. Leave at least 90cm on all sides.\n\n2. Consider the shape. Round tables work well in smaller rooms.\n\n3. Think about the material. Solid wood is durable and timeless.\n\n4. Match your style. Your dining table should complement existing furniture.\n\n5. Test the height. Standard dining tables are 75-80cm tall.',date:'10/05/2025',img:''},
+    {id:'b2',title:'How to Care for Teak Wood Furniture',cat:'Care Guide',author:'Furniture Mama Team',excerpt:'With proper care, teak furniture can last generations.',body:'Teak wood is one of the most prized materials in furniture making.\n\nCleaning: Wipe with a soft damp cloth. Avoid harsh chemicals.\n\nOiling: Apply teak oil every 6 months to maintain the golden colour.\n\nSunlight: Avoid extended direct sunlight to prevent fading.\n\nScratches: Buff out with fine sandpaper then oil.\n\nMonsoon care: Use furniture covers to protect from humidity.',date:'01/06/2025',img:''},
+    {id:'b3',title:'2025 Furniture Trends in Bangladesh',cat:'Trends',author:'Furniture Mama Team',excerpt:'Discover what furniture trends are taking over Bangladesh this year.',body:'The furniture landscape in Bangladesh is evolving rapidly.\n\nMinimalist Designs: Clean lines and simple forms are dominating.\n\nLocal Wood: Consumers increasingly choose locally sourced wood.\n\nMulti-functional Furniture: Multi-purpose pieces are hugely popular in urban spaces.\n\nBold Upholstery: Jewel tones like emerald and sapphire replacing neutrals.\n\nCustom Orders: Families opting for bespoke furniture.',date:'15/07/2025',img:''}
+  ]);
+  // Always ensure all settings keys exist — merge defaults under any existing values
+  {
+    const existingSt=ldO('st');
+    const defaults={instagram:'https://www.instagram.com/furniture_maama/',facebook:'',linkedin:'',whatsapp:'8801628340463',address:'Dhaka, Bangladesh',adminEmail:'',ejsService:'',ejsTemplate:'',ejsKey:''};
+    // Fill in any missing keys without overwriting user-saved values
+    let changed=false;
+    Object.keys(defaults).forEach(k=>{
+      if(!existingSt.hasOwnProperty(k)||existingSt[k]===undefined||existingSt[k]===null){
+        existingSt[k]=defaults[k];changed=true;
+      }
+    });
+    if(changed)svO('st',existingSt);
+  }
+  if(!ldO('ap').brand)svO('ap',{brand:'Furniture Mama',logoImg:'',footDesc:'Crafting comfort and style for homes everywhere. Quality furniture, custom orders, doorstep delivery.',badge:'E Furniture Store',title:'Furniture that makes your home feel *more like home.*',sub:'Quality furniture, thoughtfully crafted for every space and budget.',colors:DEFAULT_COLORS});
+  // Seed featured products (first 4 product IDs)
+  if(!ldO('ap').featured){
+    const apTmp=ldO('ap');
+    const firstFour=ld('prods').slice(0,4).map(p=>p.id);
+    apTmp.featured=firstFour;
+    apTmp.fontKey='syne';
+    svO('ap',apTmp);
+  }
+  if(!ldO('pol').delTitle)svO('pol',{
+    delTitle:'Delivery Policy',delUpdated:'Last updated: January 2025',
+    delAreas:'We currently deliver to all areas within Dhaka city and surrounding districts. Deliveries outside Dhaka can be arranged on request — contact us via WhatsApp.',
+    delCharges:'Dhaka city: ৳300–৳800 based on size & location.\nOutside Dhaka: Quoted before confirmation.\nOrders above ৳50,000: Free delivery within Dhaka.',
+    delDamage:'Report transit damage with photos within 24 hours. We will arrange replacement or repair at no cost.',
+    retTitle:'Return & Exchange Policy',retUpdated:'Last updated: January 2025',
+    retElig:'Returns accepted within 7 days if item received is significantly different from order, has a manufacturing defect, or is in unused original condition.',
+    retNoelig:'Custom-made or personalised items.\nItems used, assembled incorrectly or damaged after delivery.\nReturns after 7 days.\nFinal sale items.',
+    retHow:'WhatsApp us within 7 days with photos. We assess within 48 hours and arrange free pickup if eligible.',
+    retRefund:'Refunds issued within 7–10 working days via original payment method. Delivery charges non-refundable unless error on our side.'
+  });
+}
+
+// ═══════════════════════════════════════════
+//  APPLY APPEARANCE (colors, logo, text)
+// ═══════════════════════════════════════════
+function applyAppearance(){
+  const ap=ldO('ap'), st=ldO('st');
+  // Colors
+  const colors=ap.colors||DEFAULT_COLORS;
+  Object.entries(colors).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));
+  // Logo
+  const imgEl=document.getElementById('logo-img-el');
+  const txtEl=document.getElementById('logo-text-el');
+  if(ap.logoImg){
+    imgEl.src=ap.logoImg; imgEl.style.display='block'; txtEl.style.display='none';
+  } else {
+    imgEl.style.display='none'; txtEl.style.display='flex';
+    const parts=(ap.brand||'Furniture Mama').split(' ');
+    const last=parts.pop();
+    txtEl.innerHTML=parts.join(' ')+' <span>'+last+'</span>';
+  }
+  // Footer brand
+  const fb=document.getElementById('foot-brand');
+  if(fb)fb.textContent=ap.brand||'Furniture Mama';
+  const fd=document.getElementById('foot-desc');
+  if(fd)fd.textContent=ap.footDesc||'';
+  // Hero
+  const badge=document.getElementById('h-badge');
+  if(badge)badge.textContent=ap.badge||'E Furniture Store';
+  const titleEl=document.getElementById('h-title');
+  if(titleEl){
+    let raw=ap.title||'Furniture that makes your home feel *more like home.*';
+    let html=raw.split('|').map((p,i,a)=>{
+      let t=p.replace(/\*([^*]+)\*/g,'<em>$1</em>');
+      return i<a.length-1?t+'<br>':t;
+    }).join('');
+    titleEl.innerHTML=html;
+  }
+  const sub=document.getElementById('h-sub');
+  if(sub)sub.textContent=ap.sub||'';
+  // Footer contact
+  const addr=document.getElementById('foot-addr');
+  if(addr)addr.textContent='📍 '+(st.address||'Dhaka, Bangladesh');
+  let rawWa=(st.whatsapp||'8801628340463').replace(/[^0-9]/g,'');
+  if(rawWa.startsWith('01')&&rawWa.length===11) rawWa='88'+rawWa;
+  const wa=rawWa?`https://wa.me/${rawWa}`:'#';
+  const waEl=document.getElementById('foot-wa');
+  if(waEl){waEl.href=wa;}
+  // Social icons — Instagram, Facebook, LinkedIn
+  const igEl=document.getElementById('foot-ig-icon');
+  const fbEl=document.getElementById('foot-fb-icon');
+  const liEl=document.getElementById('foot-li-icon');
+  if(igEl)igEl.href=st.instagram||'#';
+  if(fbEl)fbEl.href=st.facebook||'#';
+  if(liEl)liEl.href=st.linkedin||'#';
+  // Footer copy
+  const fc=document.getElementById('foot-copy');
+  if(fc)fc.textContent=`© ${new Date().getFullYear()} ${ap.brand||'Furniture Mama'}. All rights reserved.`;
+  // Page title
+  document.getElementById('pg-title').textContent=(ap.brand||'Furniture Mama')+' — E Furniture Store';
+  // Re-render product WA buttons with latest number (setTimeout ensures function is defined)
+  setTimeout(()=>{
+    if(typeof renderProductGrid==='function'){
+      try{renderProductGrid();}catch(e){console.log('renderProductGrid error:',e);}
+    }
+    if(typeof renderHeroFeatured==='function'){
+      try{renderHeroFeatured();}catch(e){}
+    }
+  },0);
+}
+
+// Apply policies to page
+function applyPolicies(){
+  const p=ldO('pol');
+  const setText=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v||'';};
+  const setList=(id,v)=>{
+    const el=document.getElementById(id);if(!el)return;
+    const lines=(v||'').split('\n').filter(Boolean);
+    if(lines.length){el.innerHTML=lines.map(l=>`<li>${l}</li>`).join('');}
+  };
+  setText('pol-del-title',p.delTitle);setText('pol-del-updated',p.delUpdated);
+  setText('pol-del-areas',p.delAreas);setList('pol-del-charges',p.delCharges);
+  setText('pol-del-damage',p.delDamage);
+  setText('pol-ret-title',p.retTitle);setText('pol-ret-updated',p.retUpdated);
+  setText('pol-ret-elig',p.retElig);setList('pol-ret-noelig',p.retNoelig);
+  setText('pol-ret-how',p.retHow);setText('pol-ret-refund',p.retRefund);
+}
+
+// ═══════════════════════════════════════════
+//  PAGE ROUTING
+// ═══════════════════════════════════════════
+let curPage='products';
+let pageHistory=[];
+
+function showPage(pg){
+  // Track history for back navigation (don't track product-detail here, openProductDetail handles it)
+  if(curPage && curPage!==pg && pg!=='product-detail') pageHistory.push(curPage);
+  if(pageHistory.length>20) pageHistory.shift();
+  curPage=pg;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pageEl=document.getElementById('page-'+pg);
+  if(!pageEl){console.warn('showPage: no element for page-'+pg);return false;}
+  pageEl.classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  const el=document.getElementById('nav-'+pg);if(el)el.classList.add('active');
+  // Smart scroll: Products page scrolls to products grid (below hero), others go to top
+  if(pg==='products'){
+    window.scrollTo(0,0);
+  } else {
+    window.scrollTo(0,0);
+  }
+  closeMob();
+  updateBackButtons(pg);
+  if(pg==='products')renderProducts();
+  if(pg==='reviews')renderReviews();
+  if(pg==='blog')renderBlogs();
+  return false;
+}
+
+function goBack(){
+  // Pop history and go to previous page
+  const prev=pageHistory.pop()||'products';
+  // Don't push to history again when going back
+  curPage=prev;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pageEl=document.getElementById('page-'+prev);
+  if(pageEl) pageEl.classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  const el=document.getElementById('nav-'+prev);if(el)el.classList.add('active');
+  window.scrollTo(0,0);
+  updateBackButtons(prev);
+  if(prev==='products')renderProducts();
+  if(prev==='reviews')renderReviews();
+  if(prev==='blog')renderBlogs();
+}
+
+function updateBackButtons(pg){
+  // Show back bar on inner pages, hide on main products page
+  const backBar=document.getElementById('global-back-bar');
+  if(!backBar) return;
+  if(pg==='products'){
+    backBar.style.display='none';
+  } else {
+    backBar.style.display='flex';
+    const lbl=document.getElementById('back-bar-label');
+    const labels={
+      'custom':'Customize Order','reviews':'Reviews','blog':'Blog',
+      'policy':'Policies','product-detail':'Product Details'
+    };
+    if(lbl) lbl.textContent=labels[pg]||'Back';
+  }
+}
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10));
+window.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeDrawer(); });
+
+// ── DRAWER (slide-in nav) ──
+function openDrawer(){
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('hamburgerBtn').classList.add('open');
+  document.body.style.overflow='hidden';
+  // Populate categories in drawer
+  populateDrawerCats();
+  // Update WhatsApp button href
+  const wa=getWaNum();
+  const btn=document.getElementById('drawer-wa-btn');
+  if(btn) btn.onclick=()=>{closeDrawer();window.open('https://wa.me/'+wa,'_blank');};
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('hamburgerBtn').classList.remove('open');
+  document.body.style.overflow='';
+}
+function toggleDrawerSection(subId, headerEl){
+  const sub=document.getElementById(subId);
+  const isOpen=sub.classList.contains('open');
+  // Close all sub-sections first
+  document.querySelectorAll('.drawer-sub').forEach(s=>s.classList.remove('open'));
+  document.querySelectorAll('.drawer-item').forEach(i=>i.classList.remove('expanded'));
+  if(!isOpen){
+    sub.classList.add('open');
+    headerEl.classList.add('expanded');
+  }
+}
+function drawerNav(page){
+  closeDrawer();
+  if(page==='products') navToProducts();
+  else showPage(page);
+}
+function drawerNavPolicy(tab){
+  closeDrawer();
+  showPage('policy');
+  setTimeout(()=>{
+    const btn=document.querySelector(`.policy-tab[onclick*="${tab}"]`);
+    if(btn) btn.click();
+  },120);
+}
+function populateDrawerCats(){
+  const cats=ld('cats');
+  const list=document.getElementById('drawer-cat-list');
+  if(!list||!cats.length) return;
+  list.outerHTML=cats.map(c=>`<span class="drawer-sub-item" onclick="drawerFilterCat('${c.id}')">${c.icon?c.icon+' ':''}${c.name}</span>`).join('');
+}
+function drawerFilterCat(catId){
+  closeDrawer();
+  showPage('products');
+  setTimeout(()=>filterCat(catId), 80);
+}
+// Keep closeMob as alias so any remaining references don't crash
+function closeMob(){ closeDrawer(); }
+function toggleMob(){ openDrawer(); }
+
+function switchPolicy(tab,btn){
+  document.querySelectorAll('.policy-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.policy-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pol-'+tab).classList.add('active');btn.classList.add('active');
+}
+
+// ═══════════════════════════════════════════
+//  PRODUCTS — with pagination & product detail
+// ═══════════════════════════════════════════
+let activeCat='all';
+let curProdPage=1;
+const PRODS_PER_PAGE=12;
+
+function renderCatStrip(){
+  const cats=ld('cats'),strip=document.getElementById('catStrip');
+  strip.innerHTML=`<button class="cat-btn ${activeCat==='all'?'active':''}" onclick="filterCat('all')">🏠 All</button>`;
+  cats.forEach(c=>{
+    const icon=c.icon?c.icon+' ':'';
+    strip.innerHTML+=`<button class="cat-btn ${activeCat===c.id?'active':''}" onclick="filterCat('${c.id}')">${icon}${c.name}</button>`;
+  });
+}
+function filterCat(id){
+  activeCat=id;curProdPage=1;renderCatStrip();renderProductGrid();
+  scrollToProducts();
+}
+function scrollToProducts(){
+  const sec=document.getElementById('prod-section');
+  if(!sec) return;
+  // Account for sticky nav (64px) + back bar (when visible ~50px)
+  const navH=64;
+  const backBar=document.getElementById('global-back-bar');
+  const backH=(backBar&&backBar.style.display!=='none')?backBar.offsetHeight:0;
+  const offset=navH+backH+8;
+  const top=sec.getBoundingClientRect().top+window.pageYOffset-offset;
+  window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+}
+function navToProducts(){
+  if(curPage==='products'){
+    // Already on products — just scroll to grid
+    scrollToProducts();
+  } else {
+    showPage('products');
+    // After page switches, scroll to grid
+    setTimeout(scrollToProducts,80);
+  }
+  return false;
+}
+function renderProducts(){renderCatStrip();renderProductGrid();}
+
+function getWaNum(){
+  const st=ldO('st');
+  let rawNum=(st.whatsapp||'8801628340463').replace(/[^0-9]/g,'');
+  if(rawNum.startsWith('01')&&rawNum.length===11) rawNum='88'+rawNum;
+  return rawNum||'8801628340463';
+}
+
+function renderProductGrid(){
+  const prods=ld('prods'),cats=ld('cats');
+  const cmap={};cats.forEach(c=>cmap[c.id]=c);
+  const filtered=activeCat==='all'?prods:prods.filter(p=>p.catId===activeCat);
+  const grid=document.getElementById('prodGrid');
+  const pgDiv=document.getElementById('pagination');
+  const waNum=getWaNum();
+
+  if(!filtered.length){
+    grid.innerHTML=`<div class="empty-grid"><div style="font-size:2.5rem;margin-bottom:12px">🪑</div><p>No products in this category yet.</p></div>`;
+    if(pgDiv)pgDiv.innerHTML='';return;
+  }
+
+  // Pagination
+  const totalPages=Math.ceil(filtered.length/PRODS_PER_PAGE);
+  if(curProdPage>totalPages)curProdPage=1;
+  const start=(curProdPage-1)*PRODS_PER_PAGE;
+  const pageProds=filtered.slice(start,start+PRODS_PER_PAGE);
+
+  grid.innerHTML=pageProds.map(p=>{
+    const cat=cmap[p.catId]||{};
+    const img=p.img?`<img src="${p.img}" alt="${p.name}">`:`<div class="no-img">${cat.icon||'🪑'}</div>`;
+    const wa=`https://wa.me/${waNum}?text=${encodeURIComponent('Hi! I am interested in: '+p.name+' (৳'+Number(p.price).toLocaleString()+')')}`;
+    return `<div class="prod-card" onclick="openProductDetail('${p.id}')" style="cursor:pointer">
+      <div class="prod-thumb">${img}</div>
+      ${p.badge?(()=>{
+      const b=p.badge.toLowerCase();
+      const cls=b.includes('new')?'badge-new':b.includes('sale')||b.includes('off')?'badge-sale':b.includes('best')||b.includes('hot')?'badge-hot':'';
+      return `<div class="prod-badge ${cls}">${p.badge}</div>`;
+    })():''}
+      <div class="prod-body">
+        <div class="prod-cat-tag">${cat.name||''}</div>
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-desc">${p.desc||''}</div>
+        <div class="prod-price">৳${Number(p.price).toLocaleString()}</div>
+        <a class="wa-btn" href="${wa}" target="_blank" onclick="event.stopPropagation()">💬 Order on WhatsApp</a>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Render pagination
+  if(pgDiv){
+    if(totalPages<=1){pgDiv.innerHTML='';return;}
+    let html='';
+    for(let i=1;i<=totalPages;i++){
+      html+=`<button class="pg-btn${i===curProdPage?' active':''}" onclick="goProdPage(${i})">${i}</button>`;
+    }
+    pgDiv.innerHTML=html;
+  }
+}
+
+function goProdPage(n){curProdPage=n;renderProductGrid();setTimeout(scrollToProducts,50);}
+
+// ── PRODUCT DETAIL PAGE ──
+function openProductDetail(id){
+  const prods=ld('prods'),cats=ld('cats');
+  const p=prods.find(x=>x.id===id);if(!p)return;
+  const cmap={};cats.forEach(c=>cmap[c.id]=c);
+  const cat=cmap[p.catId]||{};
+  const waNum=getWaNum();
+
+  // Set category
+  document.getElementById('pd-cat').textContent=cat.name||'';
+  // Set name & price
+  document.getElementById('pd-name').textContent=p.name;
+  document.getElementById('pd-price').textContent='৳'+Number(p.price).toLocaleString();
+  // Set description
+  document.getElementById('pd-desc').textContent=p.desc||'';
+
+  // Main image
+  const mainDiv=document.getElementById('pd-main-img');
+  const allImgs=[p.img,...(p.extraImgs||[])].filter(Boolean);
+  if(allImgs.length>0){
+    mainDiv.innerHTML=`<img src="${allImgs[0]}" alt="${p.name}" id="pd-main-img-tag">`;
+  } else {
+    mainDiv.innerHTML=`<div class="no-img-lg">${cat.icon||'🪑'}</div>`;
+  }
+
+  // Thumbnails
+  const thumbsDiv=document.getElementById('pd-thumbs');
+  thumbsDiv.innerHTML='';
+  allImgs.forEach((img,i)=>{
+    const t=document.createElement('div');
+    t.className='pd-thumb'+(i===0?' active':'');
+    t.innerHTML=`<img src="${img}" alt="view ${i+1}">`;
+    t.onclick=()=>{
+      document.getElementById('pd-main-img').innerHTML=`<img src="${img}" alt="${p.name}">`;
+      thumbsDiv.querySelectorAll('.pd-thumb').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+    };
+    thumbsDiv.appendChild(t);
+  });
+
+  // Dimensions
+  const dimsSec=document.getElementById('pd-dims-sec');
+  const hasDims=p.width||p.height||p.depth||p.weight;
+  dimsSec.style.display=hasDims?'':'none';
+  if(hasDims){
+    const dimsGrid=document.getElementById('pd-dims-grid');
+    const dims=[];
+    if(p.width)dims.push({l:'Width',v:p.width});
+    if(p.height)dims.push({l:'Height',v:p.height});
+    if(p.depth)dims.push({l:'Depth / Length',v:p.depth});
+    if(p.weight)dims.push({l:'Weight',v:p.weight});
+    dimsGrid.innerHTML=dims.map(d=>`<div class="pd-spec"><div class="pd-spec-label">${d.l}</div><div class="pd-spec-val">${d.v}</div></div>`).join('');
+  }
+
+  // Materials
+  const matSec=document.getElementById('pd-mat-sec');
+  const mats=(p.mats||'').split(',').map(m=>m.trim()).filter(Boolean);
+  matSec.style.display=mats.length?'':'none';
+  if(mats.length){
+    document.getElementById('pd-mats').innerHTML=mats.map(m=>`<span class="pd-mat-tag">${m}</span>`).join('');
+  }
+
+  // Extra details
+  const extraSec=document.getElementById('pd-extra-sec');
+  extraSec.style.display=p.extra?'':'none';
+  if(p.extra)document.getElementById('pd-extra').textContent=p.extra;
+
+  // WhatsApp buttons
+  const orderMsg=encodeURIComponent(`Hi! I want to order: *${p.name}* (৳${Number(p.price).toLocaleString()}). Please confirm availability.`);
+  const inquiryMsg=encodeURIComponent(`Hi! I have a question about: *${p.name}* (৳${Number(p.price).toLocaleString()}). Can you help?`);
+  document.getElementById('pd-wa-order').href=`https://wa.me/${waNum}?text=${orderMsg}`;
+  document.getElementById('pd-wa-inquiry').href=`https://wa.me/${waNum}?text=${inquiryMsg}`;
+
+  // Related products — same category, exclude current product
+  const related=prods.filter(x=>x.catId===p.catId&&x.id!==p.id).slice(0,4);
+  const relSec=document.getElementById('pd-related');
+  const relGrid=document.getElementById('pd-related-grid');
+  const relTitle=document.getElementById('pd-related-title');
+  if(related.length&&relSec&&relGrid){
+    relSec.style.display='block';
+    relTitle.textContent=`More in ${cat.name||'this Category'}`;
+    relGrid.innerHTML=related.map(r=>{
+      const rcat=cmap[r.catId]||{};
+      const rimg=r.img?`<img src="${r.img}" alt="${r.name}">`:`<div style="font-size:2rem;color:var(--c-border)">${rcat.icon||'🪑'}</div>`;
+      return `<div class="pd-rel-card" onclick="openProductDetail('${r.id}')">
+        <div class="pd-rel-thumb">${rimg}</div>
+        <div class="pd-rel-body">
+          <div class="pd-rel-name">${r.name}</div>
+          <div class="pd-rel-price">৳${Number(r.price).toLocaleString()}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } else if(relSec){
+    relSec.style.display='none';
+  }
+
+  // Show page — push products to history so back button works
+  if(curPage!=='product-detail') pageHistory.push(curPage||'products');
+  curPage='product-detail';
+  document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
+  document.getElementById('page-product-detail').classList.add('active');
+  updateBackButtons('product-detail');
+  window.scrollTo(0,0);
+}
+
+
+// ═══════════════════════════════════════════
+//  CUSTOM REQUEST
+// ═══════════════════════════════════════════
+let uploadImgs=[];
+function previewUploads(inp){
+  const prev=document.getElementById('uploadPrev');prev.innerHTML='';uploadImgs=[];
+  Array.from(inp.files).forEach(f=>{
+    const r=new FileReader();
+    r.onload=e=>{uploadImgs.push(e.target.result);const img=document.createElement('img');img.src=e.target.result;prev.appendChild(img);};
+    r.readAsDataURL(f);
+  });
+}
+function submitCustom(){
+  const name=document.getElementById('c-name').value.trim();
+  const phone=document.getElementById('c-phone').value.trim();
+  const type=document.getElementById('c-type').value;
+  const desc=document.getElementById('c-desc').value.trim();
+  if(!name||!phone||!type||!desc){toast('Please fill all required fields.');return;}
+  const reqs=ld('reqs');
+  reqs.unshift({id:uid(),name,phone,email:document.getElementById('c-email').value,type,material:document.getElementById('c-material').value,budget:document.getElementById('c-budget').value,dims:document.getElementById('c-dims').value,desc,images:uploadImgs,date:new Date().toLocaleDateString('en-GB'),status:'pending'});
+  sv('reqs',reqs);
+  document.getElementById('customOk').style.display='block';
+  ['c-name','c-phone','c-email','c-dims','c-desc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('c-type').value='';document.getElementById('uploadPrev').innerHTML='';uploadImgs=[];
+  toast('Request submitted!');
+}
+
+// ═══════════════════════════════════════════
+//  REVIEWS
+// ═══════════════════════════════════════════
+let curStars=0;
+function setRating(n){curStars=n;document.querySelectorAll('#starRow span').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function openRevModal(){document.getElementById('revModal').classList.add('open');curStars=0;setRating(0);}
+function closeRevModal(){document.getElementById('revModal').classList.remove('open');}
+function submitReview(){
+  const name=document.getElementById('r-name').value.trim();
+  const text=document.getElementById('r-text').value.trim();
+  if(!name||!text||!curStars){toast('Please fill all fields and set a rating.');return;}
+  const revs=ld('revs');
+  revs.unshift({id:uid(),name,prod:document.getElementById('r-prod').value||'Furniture Mama',stars:curStars,text,date:new Date().toLocaleDateString('en-GB')});
+  sv('revs',revs);closeRevModal();renderReviews();toast('Thank you for your review!');
+}
+function renderReviews(){
+  const revs=ld('revs');
+  document.getElementById('stat-rev').textContent=revs.length;
+  const avg=revs.length?(revs.reduce((s,r)=>s+r.stars,0)/revs.length).toFixed(1):'0';
+  document.getElementById('stat-avg').textContent=avg+'★';
+  const grid=document.getElementById('revGrid');
+  if(!revs.length){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--c-muted)">No reviews yet. Be the first!</div>`;return;}
+  // Show highlighted first, then rest
+  const sorted=[...revs.filter(r=>r.highlighted),...revs.filter(r=>!r.highlighted)];
+  grid.innerHTML=sorted.map(r=>`<div class="rev-card${r.highlighted?' highlighted':''}">
+    <div class="rev-head"><div class="rev-avatar">${r.name[0]}</div><div><div class="rev-name">${r.name}</div><div class="rev-date">${r.date||''}</div></div></div>
+    <div class="rev-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+    <div class="rev-product">${r.prod}</div>
+    <div class="rev-text">${r.text}</div>
+  </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  BLOG
+// ═══════════════════════════════════════════
+const EMOJIS=['📐','🌿','🏡','🛋️','🪵','✨'];
+function renderBlogs(){
+  document.getElementById('blogListWrap').style.display='block';
+  document.getElementById('blogDetail').classList.remove('open');
+  const blogs=ld('blogs'),grid=document.getElementById('blogGrid');
+  if(!blogs.length){grid.innerHTML=`<div style="text-align:center;padding:60px;color:var(--c-muted)">No blog posts yet.</div>`;return;}
+  grid.innerHTML=blogs.map((b,i)=>`<div class="blog-card" onclick="openBlog('${b.id}')">
+    <div class="blog-thumb">${b.img?`<img src="${b.img}" alt="">`:`<span style="font-size:2.2rem">${EMOJIS[i%EMOJIS.length]}</span>`}</div>
+    <div class="blog-body">
+      <div class="blog-cat-tag">${b.cat||'Blog'}</div>
+      <div class="blog-title">${b.title}</div>
+      <div class="blog-excerpt">${b.excerpt||b.body.substr(0,90)+'…'}</div>
+      <div class="blog-meta"><span>${b.author||'Team'} · ${b.date||''}</span><button class="blog-more">Read More →</button></div>
+    </div>
+  </div>`).join('');
+}
+function openBlog(id){
+  const b=ld('blogs').find(x=>x.id===id);if(!b)return;
+  document.getElementById('blogListWrap').style.display='none';
+  document.getElementById('blogDetail').classList.add('open');
+  document.getElementById('bd-cat').textContent=b.cat||'Blog';
+  document.getElementById('bd-title').textContent=b.title;
+  document.getElementById('bd-meta').textContent=`By ${b.author||'Team'} · ${b.date||''}`;
+  document.getElementById('bd-body').innerHTML=b.body.split('\n').map(p=>p?`<p>${p}</p>`:'').join('');
+  window.scrollTo(0,0);
+}
+function closeBlogDetail(){renderBlogs();}
+
+// ═══════════════════════════════════════════
+//  ADMIN — accessed via URL hash #admin
+// ═══════════════════════════════════════════
+let admLoggedIn=false;
+// Secret access via hash
+window.addEventListener('hashchange',checkHash);
+function checkHash(){
+  if(window.location.hash==='#admin'){
+    openAdmin();
+    // Clean up hash so sharing URL doesn't expose admin
+    history.replaceState(null,'',window.location.pathname+window.location.search);
+  }
+}
+
+function openAdmin(){
+  document.getElementById('admin-overlay').classList.add('open');
+  if(admLoggedIn)showAdmPanel();
+  else{document.getElementById('admLogin').style.display='flex';document.getElementById('admPanel').classList.remove('open');}
+}
+function doLogin(){
+  const u=document.getElementById('adm-user').value;
+  const p=document.getElementById('adm-pass').value;
+  const st=ldO('st');const cp=st.adminPass||'mama2025';
+  if(u==='admin'&&p===cp){admLoggedIn=true;showAdmPanel();}
+  else document.getElementById('admErr').style.display='block';
+}
+function showAdmPanel(){
+  document.getElementById('admLogin').style.display='none';
+  document.getElementById('admPanel').classList.add('open');
+  switchTab('dashboard',document.querySelector('.adm-nav-item'));
+}
+function doLogout(){
+  admLoggedIn=false;
+  document.getElementById('admin-overlay').classList.remove('open');
+  document.getElementById('admPanel').classList.remove('open');
+  // Clear hash without triggering hashchange (which would reopen admin)
+  history.replaceState(null, '', window.location.pathname+window.location.search);
+}
+
+let curAdmTab='dashboard';
+function switchTab(tab,el){
+  curAdmTab=tab;
+  document.querySelectorAll('.adm-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.adm-nav-item').forEach(n=>n.classList.remove('active'));
+  const tabEl=document.getElementById('tab-'+tab);
+  if(tabEl)tabEl.classList.add('active');
+  if(el)el.classList.add('active');
+  const titles={dashboard:'Dashboard',products:'Products',categories:'Categories',requests:'Custom Requests','reviews-adm':'Reviews',blogs:'Blog Posts',policies:'Policies',appearance:'Appearance',settings:'Settings'};
+  document.getElementById('admTabTitle').textContent=titles[tab]||tab;
+  const hasBtns={products:true,categories:true,blogs:true};
+  const btn=document.getElementById('admAddBtn');
+  btn.style.display=hasBtns[tab]?'':'none';
+  btn.onclick=()=>{if(tab==='products')openProdModal();else if(tab==='categories')openCatModal();else if(tab==='blogs')openBlogModal();};
+  if(tab==='dashboard')renderDash();
+  if(tab==='products')renderAdmProds();
+  if(tab==='categories')renderAdmCats();
+  if(tab==='requests')renderAdmReqs();
+  if(tab==='reviews-adm')renderAdmRevs();
+  if(tab==='blogs')renderAdmBlogs();
+  if(tab==='policies')loadPolForm();
+  if(tab==='appearance')loadApForm();
+  if(tab==='settings')loadStForm();
+}
+
+// Dashboard
+function renderDash(){
+  const prods=ld('prods'),cats=ld('cats'),reqs=ld('reqs'),revs=ld('revs'),blogs=ld('blogs');
+  document.getElementById('dashStats').innerHTML=`
+    <div class="adm-stat"><div class="n">${prods.length}</div><div class="l">Products</div></div>
+    <div class="adm-stat"><div class="n">${cats.length}</div><div class="l">Categories</div></div>
+    <div class="adm-stat"><div class="n">${reqs.filter(r=>r.status==='pending').length}</div><div class="l">Pending Requests</div></div>
+    <div class="adm-stat"><div class="n">${revs.length}</div><div class="l">Reviews</div></div>
+    <div class="adm-stat"><div class="n">${blogs.length}</div><div class="l">Blog Posts</div></div>`;
+  const recent=reqs.slice(0,5);
+  document.getElementById('dashRequests').innerHTML=recent.length?`
+    <table class="adm-tbl"><thead><tr><th>Name</th><th>Type</th><th>Budget</th><th>Date</th><th>Status</th></tr></thead>
+    <tbody>${recent.map(r=>`<tr><td>${r.name}</td><td>${r.type}</td><td>${r.budget||'-'}</td><td>${r.date}</td><td><span class="req-badge ${r.status}">${r.status}</span></td></tr>`).join('')}</tbody></table>`
+    :`<p style="color:var(--c-muted);font-size:.82rem">No requests yet.</p>`;
+}
+
+// Products table
+function renderAdmProds(){
+  const prods=ld('prods'),cats=ld('cats');const cm={};cats.forEach(c=>cm[c.id]=c);
+  if(!prods.length){
+    document.getElementById('prodTbody').innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--c-muted)">No products yet. Click + Add New to start.</td></tr>';
+    return;
+  }
+  document.getElementById('prodTbody').innerHTML=prods.map(p=>{
+    const imgCount=(p.extraImgs||[]).length;
+    const imgBadge=imgCount?`<span style="font-size:.65rem;background:#EEF2FF;color:#3949AB;padding:1px 6px;border-radius:10px;margin-left:4px">+${imgCount}</span>`:'';
+    return `<tr>
+      <td>${p.img?`<img src="${p.img}">`:`<span style="font-size:1.4rem">${cm[p.catId]?.icon||'🪑'}</span>`}${imgBadge}</td>
+      <td><strong>${p.name}</strong></td>
+      <td>${cm[p.catId]?.name||'-'}</td>
+      <td>৳${Number(p.price).toLocaleString()}</td>
+      <td>${p.badge?`<span style="font-size:.7rem;background:rgba(193,127,62,.1);color:var(--c-accent);padding:2px 8px;border-radius:20px">${p.badge}</span>`:'-'}</td>
+      <td class="td-actions">
+        <button class="btn-edit" onclick="openProdModal('${p.id}')">Edit</button>
+        <button class="btn-del" onclick="delProd('${p.id}')">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function renderAdmCats(){
+  document.getElementById('catTbody').innerHTML=ld('cats').map(c=>`<tr>
+    <td style="font-size:1.3rem">${c.icon}</td><td><strong>${c.name}</strong></td>
+    <td class="td-actions"><button class="btn-edit" onclick="openCatModal('${c.id}')">Edit</button><button class="btn-del" onclick="delCat('${c.id}')">Delete</button></td>
+  </tr>`).join('');
+}
+function renderAdmReqs(){
+  const reqs=ld('reqs');
+  document.getElementById('reqTbody').innerHTML=reqs.length?reqs.map(r=>`<tr>
+    <td>${r.date}</td><td><strong>${r.name}</strong></td><td>${r.phone}</td>
+    <td>${r.type}</td><td>${r.budget||'-'}</td><td><span class="req-badge ${r.status}">${r.status}</span></td>
+    <td class="td-actions"><button class="btn-done" onclick="markDone('${r.id}')">✓ Done</button><button class="btn-del" onclick="delReq('${r.id}')">Delete</button></td>
+  </tr>`).join(''):`<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--c-muted)">No requests yet.</td></tr>`;
+}
+function renderAdmRevs(){
+  const revs=ld('revs');
+  if(!revs.length){
+    document.getElementById('revTbody').innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--c-muted)">No reviews yet.</td></tr>';
+    return;
+  }
+  document.getElementById('revTbody').innerHTML=revs.map(r=>`<tr>
+    <td><strong>${r.name}</strong></td>
+    <td>${r.prod}</td>
+    <td>${'★'.repeat(r.stars)}</td>
+    <td style="max-width:160px;font-size:.8rem">${(r.text||'').substr(0,60)}…</td>
+    <td>${r.date||'-'}</td>
+    <td><span style="font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:20px;${r.highlighted?'background:#FFF3E0;color:#E65100':'background:#F5F5F5;color:#999'}">${r.highlighted?'⭐ Featured':'—'}</span></td>
+    <td class="td-actions">
+      <button class="${r.highlighted?'btn-edit':'btn-done'}" onclick="toggleHighlight('${r.id}')">${r.highlighted?'Unfeature':'⭐ Feature'}</button>
+      <button class="btn-del" onclick="delRev('${r.id}')">Delete</button>
+    </td>
+  </tr>`).join('');
+}
+function renderAdmBlogs(){
+  document.getElementById('blogTbody').innerHTML=ld('blogs').map(b=>`<tr>
+    <td><strong>${b.title}</strong></td><td>${b.cat||'-'}</td><td>${b.author||'-'}</td><td>${b.date||'-'}</td>
+    <td class="td-actions"><button class="btn-edit" onclick="openBlogModal('${b.id}')">Edit</button><button class="btn-del" onclick="delBlog('${b.id}')">Delete</button></td>
+  </tr>`).join('');
+}
+
+// Product CRUD
+function openProdModal(id){
+  const cats=ld('cats');
+  document.getElementById('pm-cat').innerHTML=cats.map(c=>`<option value="${c.id}">${c.icon?c.icon+' ':''}${c.name}</option>`).join('');
+  if(id){
+    const p=ld('prods').find(x=>x.id===id);if(!p)return;
+    document.getElementById('pm-h').textContent='Edit Product';
+    document.getElementById('pm-id').value=p.id;
+    document.getElementById('pm-name').value=p.name;
+    document.getElementById('pm-cat').value=p.catId;
+    document.getElementById('pm-price').value=p.price;
+    document.getElementById('pm-badge').value=p.badge||'';
+    document.getElementById('pm-desc').value=p.desc||'';
+    document.getElementById('pm-extra').value=p.extra||'';
+    document.getElementById('pm-width').value=p.width||'';
+    document.getElementById('pm-height').value=p.height||'';
+    document.getElementById('pm-depth').value=p.depth||'';
+    document.getElementById('pm-weight').value=p.weight||'';
+    document.getElementById('pm-mats').value=p.mats||'';
+    document.getElementById('pm-img-prev').innerHTML=p.img?`<img src="${p.img}">`:'' ;
+    // Show existing extra images
+    const extraPrevs=document.getElementById('pm-extra-prevs');
+    if(extraPrevs){
+      extraPrevs.innerHTML=(p.extraImgs||[]).map(src=>`<img src="${src}" style="width:70px;height:60px;object-fit:cover;border-radius:4px;border:1px solid var(--c-border)">`).join('');
+    }
+  } else {
+    document.getElementById('pm-h').textContent='Add Product';
+    document.getElementById('pm-id').value='';
+    ['pm-name','pm-price','pm-badge','pm-desc','pm-extra','pm-width','pm-height','pm-depth','pm-weight','pm-mats'].forEach(i=>{
+      const el=document.getElementById(i);if(el)el.value='';
+    });
+    document.getElementById('pm-img-prev').innerHTML='';
+    const ep=document.getElementById('pm-extra-prevs');if(ep)ep.innerHTML='';
+  }
+  openAdmModal('prodModal');
+  // Always reset extra image state when opening modal
+  adminExtraImgs=[];
+  extraImgsReady=true;
+  // Clear file inputs so old selection doesn't persist
+  const extraInp=document.getElementById('pm-imgs-extra');
+  if(extraInp) extraInp.value='';
+  const mainInp=document.getElementById('pm-img');
+  if(mainInp) mainInp.value='';
+}
+
+// Preview extra images in admin modal
+// Uses a Promise-based approach so all images are guaranteed loaded before saveProd runs
+let adminExtraImgs=[];
+let extraImgsReady=true; // flag: false while reads are in progress
+
+function prevExtraImgs(inp){
+  adminExtraImgs=[];
+  extraImgsReady=false;
+  const prevs=document.getElementById('pm-extra-prevs');
+  if(prevs)prevs.innerHTML='';
+
+  const files=Array.from(inp.files).slice(0,3);
+  if(!files.length){extraImgsReady=true;return;}
+
+  let loaded=0;
+  files.forEach((f,i)=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      adminExtraImgs[i]=e.target.result; // store by index to preserve order
+      if(prevs){
+        const img=document.createElement('img');
+        img.src=e.target.result;
+        img.style.cssText='width:70px;height:60px;object-fit:cover;border-radius:4px;border:1px solid var(--c-border)';
+        prevs.appendChild(img);
+      }
+      loaded++;
+      if(loaded===files.length){
+        adminExtraImgs=adminExtraImgs.filter(Boolean); // remove any gaps
+        extraImgsReady=true;
+        toast(`✅ ${files.length} extra image${files.length>1?'s':''} ready — now click Save Product.`);
+      }
+    };
+    r.onerror=()=>{loaded++;if(loaded===files.length)extraImgsReady=true;};
+    r.readAsDataURL(f);
+  });
+}
+
+function saveProd(){
+  const name=document.getElementById('pm-name').value.trim();
+  const price=document.getElementById('pm-price').value;
+  if(!name||!price){toast('Name and price required.');return;}
+
+  // Guard: extra images still loading
+  if(!extraImgsReady){
+    toast('⏳ Images still loading — please wait a moment then click Save again.');
+    return;
+  }
+
+  let prods=ld('prods');
+  const eid=document.getElementById('pm-id').value;
+  const imgFile=document.getElementById('pm-img').files[0];
+
+  function doSave(imgData){
+    const obj={
+      id:eid||uid(),
+      name,
+      catId:document.getElementById('pm-cat').value,
+      price:Number(price),
+      badge:document.getElementById('pm-badge').value,
+      desc:document.getElementById('pm-desc').value,
+      extra:document.getElementById('pm-extra').value,
+      width:document.getElementById('pm-width').value,
+      height:document.getElementById('pm-height').value,
+      depth:document.getElementById('pm-depth').value,
+      weight:document.getElementById('pm-weight').value,
+      mats:document.getElementById('pm-mats').value,
+      img:'',
+      extraImgs:[]
+    };
+
+    // Main image
+    if(imgData){
+      obj.img=imgData;
+    } else if(eid){
+      const old=prods.find(p=>p.id===eid);
+      if(old) obj.img=old.img||'';
+    }
+
+    // Extra images — use newly uploaded ones, or keep existing ones if none uploaded
+    if(adminExtraImgs.length>0){
+      obj.extraImgs=[...adminExtraImgs]; // copy the array
+    } else if(eid){
+      const old=prods.find(p=>p.id===eid);
+      if(old) obj.extraImgs=old.extraImgs||[];
+    }
+
+    // Save
+    if(eid){
+      const idx=prods.findIndex(p=>p.id===eid);
+      if(idx>-1) prods[idx]=obj;
+    } else {
+      prods.push(obj);
+    }
+
+    sv('prods',prods);
+
+    // Reset state
+    adminExtraImgs=[];
+    extraImgsReady=true;
+
+    closeAdmModal('prodModal');
+    renderAdmProds();
+    if(curPage==='products') renderProducts();
+    renderHeroFeatured();
+    // Refresh featured picker if appearance tab is open
+    if(typeof loadFeatPicker==='function'){try{loadFeatPicker();}catch(e){}}
+    toast('✅ Product saved with all images!');
+  }
+
+  // Main image also async — wait for it too
+  if(imgFile){
+    const r=new FileReader();
+    r.onload=e=>doSave(e.target.result);
+    r.onerror=()=>doSave(null);
+    r.readAsDataURL(imgFile);
+  } else {
+    doSave(null);
+  }
+}
+function delProd(id){if(!confirm('Delete?'))return;sv('prods',ld('prods').filter(x=>x.id!==id));renderAdmProds();if(curPage==='products')renderProducts();toast('Deleted.');}
+
+// Category CRUD
+function openCatModal(id){
+  if(id){const c=ld('cats').find(x=>x.id===id);if(!c)return;document.getElementById('cm-h').textContent='Edit Category';document.getElementById('cm-id').value=c.id;document.getElementById('cm-name').value=c.name;document.getElementById('cm-icon').value=c.icon||'';}
+  else{document.getElementById('cm-h').textContent='Add Category';document.getElementById('cm-id').value='';document.getElementById('cm-name').value='';document.getElementById('cm-icon').value='';}
+  openAdmModal('catModal');
+}
+function saveCat(){
+  const name=document.getElementById('cm-name').value.trim();if(!name){toast('Name required.');return;}
+  let cats=ld('cats');const eid=document.getElementById('cm-id').value;
+  // Icon is optional — leave blank if not provided
+  const obj={id:eid||uid(),name,icon:document.getElementById('cm-icon').value||''};
+  if(eid){const idx=cats.findIndex(c=>c.id===eid);cats[idx]=obj;}else cats.push(obj);
+  sv('cats',cats);closeAdmModal('catModal');renderAdmCats();if(curPage==='products')renderProducts();toast('Category saved!');
+}
+function delCat(id){if(!confirm('Delete?'))return;sv('cats',ld('cats').filter(x=>x.id!==id));renderAdmCats();toast('Deleted.');}
+
+// Blog CRUD
+function openBlogModal(id){
+  if(id){const b=ld('blogs').find(x=>x.id===id);if(!b)return;document.getElementById('bm-h').textContent='Edit Post';document.getElementById('bm-id').value=b.id;document.getElementById('bm-title').value=b.title;document.getElementById('bm-cat').value=b.cat||'';document.getElementById('bm-author').value=b.author||'';document.getElementById('bm-excerpt').value=b.excerpt||'';document.getElementById('bm-body').value=b.body||'';document.getElementById('bm-img-prev').innerHTML=b.img?`<img src="${b.img}">`:'';}
+  else{document.getElementById('bm-h').textContent='Add Post';document.getElementById('bm-id').value='';['bm-title','bm-cat','bm-author','bm-excerpt','bm-body'].forEach(i=>document.getElementById(i).value='');document.getElementById('bm-img-prev').innerHTML='';}
+  openAdmModal('blogModal');
+}
+function saveBlog(){
+  const title=document.getElementById('bm-title').value.trim(),body=document.getElementById('bm-body').value.trim();
+  if(!title||!body){toast('Title and content required.');return;}
+  let blogs=ld('blogs');const eid=document.getElementById('bm-id').value;
+  const imgFile=document.getElementById('bm-img').files[0];
+  function doSave(imgData){
+    const obj={id:eid||uid(),title,cat:document.getElementById('bm-cat').value,author:document.getElementById('bm-author').value||'Furniture Mama Team',excerpt:document.getElementById('bm-excerpt').value,body,date:new Date().toLocaleDateString('en-GB'),img:''};
+    if(imgData)obj.img=imgData;else if(eid){const old=blogs.find(b=>b.id===eid);if(old)obj.img=old.img||'';}
+    if(eid){const idx=blogs.findIndex(b=>b.id===eid);blogs[idx]=obj;}else blogs.unshift(obj);
+    sv('blogs',blogs);closeAdmModal('blogModal');renderAdmBlogs();if(curPage==='blog')renderBlogs();toast('Blog saved!');
+  }
+  if(imgFile){const r=new FileReader();r.onload=e=>doSave(e.target.result);r.readAsDataURL(imgFile);}else doSave(null);
+}
+function delBlog(id){if(!confirm('Delete?'))return;sv('blogs',ld('blogs').filter(x=>x.id!==id));renderAdmBlogs();if(curPage==='blog')renderBlogs();toast('Deleted.');}
+
+// Requests / Reviews
+function markDone(id){let r=ld('reqs');const i=r.findIndex(x=>x.id===id);if(i>-1){r[i].status='reviewed';sv('reqs',r);renderAdmReqs();toast('Marked reviewed.');}}
+function delReq(id){if(!confirm('Delete?'))return;sv('reqs',ld('reqs').filter(x=>x.id!==id));renderAdmReqs();toast('Deleted.');}
+function delRev(id){if(!confirm('Delete this review?'))return;sv('revs',ld('revs').filter(x=>x.id!==id));renderAdmRevs();if(curPage==='reviews')renderReviews();toast('Deleted.');}
+
+function toggleHighlight(id){
+  const revs=ld('revs');
+  const idx=revs.findIndex(x=>x.id===id);
+  if(idx===-1)return;
+  revs[idx].highlighted=!revs[idx].highlighted;
+  sv('revs',revs);
+  renderAdmRevs();
+  if(curPage==='reviews')renderReviews();
+  toast(revs[idx].highlighted?'⭐ Review featured!':'Review unfeatured.');
+}
+
+// Admin posting a review
+let adminRevStars=0;
+function setAdminRating(n){
+  adminRevStars=n;
+  document.querySelectorAll('#ar-stars span').forEach((s,i)=>{
+    s.style.color=i<n?'#F5A623':'#DDD';
+  });
+}
+function postAdminReview(){
+  const name=document.getElementById('ar-name').value.trim();
+  const text=document.getElementById('ar-text').value.trim();
+  const prod=document.getElementById('ar-prod').value.trim();
+  if(!name||!text){toast('Name and review text are required.');return;}
+  if(!adminRevStars){toast('Please set a star rating.');return;}
+  const revs=ld('revs');
+  revs.unshift({
+    id:uid(), name,
+    prod:prod||'Furniture Mama',
+    stars:adminRevStars, text,
+    date:new Date().toLocaleDateString('en-GB'),
+    highlighted:false,
+    byAdmin:true
+  });
+  sv('revs',revs);
+  // Clear form
+  document.getElementById('ar-name').value='';
+  document.getElementById('ar-prod').value='';
+  document.getElementById('ar-text').value='';
+  adminRevStars=0;
+  setAdminRating(0);
+  renderAdmRevs();
+  if(curPage==='reviews')renderReviews();
+  toast('✅ Review posted successfully!');
+}
+
+// Policies
+function loadPolForm(){
+  const p=ldO('pol');
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+  set('pp-del-title',p.delTitle);set('pp-del-updated',p.delUpdated);
+  set('pp-del-areas',p.delAreas);set('pp-del-charges',p.delCharges);set('pp-del-damage',p.delDamage);
+  set('pp-ret-title',p.retTitle);set('pp-ret-updated',p.retUpdated);
+  set('pp-ret-elig',p.retElig);set('pp-ret-noelig',p.retNoelig);
+  set('pp-ret-how',p.retHow);set('pp-ret-refund',p.retRefund);
+}
+function savePolicies(){
+  const get=id=>document.getElementById(id)?.value||'';
+  svO('pol',{
+    delTitle:get('pp-del-title'),delUpdated:get('pp-del-updated'),
+    delAreas:get('pp-del-areas'),delCharges:get('pp-del-charges'),delDamage:get('pp-del-damage'),
+    retTitle:get('pp-ret-title'),retUpdated:get('pp-ret-updated'),
+    retElig:get('pp-ret-elig'),retNoelig:get('pp-ret-noelig'),
+    retHow:get('pp-ret-how'),retRefund:get('pp-ret-refund')
+  });
+  applyPolicies();toast('Policies saved!');
+}
+
+// Appearance
+function loadApForm(){
+  const ap=ldO('ap');
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+  set('ap-brand',ap.brand);set('ap-foot-desc',ap.footDesc);
+  set('ap-badge',ap.badge);set('ap-title',ap.title);set('ap-sub',ap.sub);
+  if(ap.logoImg){
+    document.getElementById('ap-logo-preview').innerHTML=`<img src="${ap.logoImg}" style="max-width:100%;max-height:100%;object-fit:contain">`;
+  } else {
+    document.getElementById('ap-logo-preview').innerHTML='<span>No logo uploaded</span>';
+  }
+  // Load colors
+  const colors=ap.colors||DEFAULT_COLORS;
+  const colorMap={
+    'col-bg':'--c-bg','col-surface':'--c-surface','col-text':'--c-text',
+    'col-accent':'--c-accent','col-accent2':'--c-accent2','col-cta':'--c-cta',
+    'col-cta-text':'--c-cta-text','col-nav-bg':'--c-nav-bg',
+    'col-hero-bg':'--c-hero-bg','col-footer-bg':'--c-footer-bg',
+    'col-border':'--c-border','col-muted':'--c-muted'
+  };
+  Object.entries(colorMap).forEach(([inputId,cssVar])=>{
+    const el=document.getElementById(inputId);
+    if(el){const val=colors[cssVar]||DEFAULT_COLORS[cssVar]||'#000000';
+      if(/^#[0-9A-Fa-f]{6}$/.test(val))el.value=val;}
+  });
+  // Load featured products picker
+  loadFeatPicker();
+  // Load font picker
+  loadFontGrid();
+}
+// ── FEATURED PRODUCTS PICKER ──
+function loadFeatPicker(){
+  const prods=ld('prods'),cats=ld('cats');
+  const ap=ldO('ap');
+  const featured=ap.featured||[];
+  const cmap={};cats.forEach(c=>cmap[c.id]=c);
+  const picker=document.getElementById('feat-picker');
+  if(!picker)return;
+  picker.innerHTML=prods.map(p=>{
+    const isSel=featured.includes(p.id);
+    const cat=cmap[p.catId]||{};
+    const thumb=p.img?`<img src="${p.img}" style="width:100%;height:60px;object-fit:cover;border-radius:4px 4px 0 0;display:block">`
+      :`<div style="height:60px;background:var(--c-bg);display:flex;align-items:center;justify-content:center;font-size:1.5rem;border-radius:4px 4px 0 0">${cat.icon||'🪑'}</div>`;
+    return `<div id="fp-${p.id}" onclick="toggleFeatured('${p.id}')"
+      style="border:2px solid ${isSel?'var(--c-accent)':'var(--c-border)'};border-radius:6px;cursor:pointer;overflow:hidden;transition:border-color .2s;background:${isSel?'rgba(193,127,62,.06)':'var(--c-surface)'}">
+      ${thumb}
+      <div style="padding:8px 10px">
+        <div style="font-size:.75rem;font-weight:700;color:var(--c-text);line-height:1.3;margin-bottom:2px">${p.name}</div>
+        <div style="font-size:.7rem;color:var(--c-muted)">৳${Number(p.price).toLocaleString()}</div>
+        ${isSel?'<div style="font-size:.65rem;color:var(--c-accent);font-weight:700;margin-top:4px">✓ Featured</div>':''}
+      </div>
+    </div>`;
+  }).join('');
+  updateFeatCount();
+}
+
+function toggleFeatured(id){
+  const ap=ldO('ap');
+  let featured=ap.featured||[];
+  if(featured.includes(id)){
+    featured=featured.filter(x=>x!==id);
+  } else {
+    if(featured.length>=4){toast('Maximum 4 featured products. Remove one first.');return;}
+    featured.push(id);
+  }
+  ap.featured=featured;
+  svO('ap',ap);
+  loadFeatPicker();
+}
+
+function updateFeatCount(){
+  const ap=ldO('ap');
+  const msg=document.getElementById('feat-count-msg');
+  if(msg) msg.textContent=`${(ap.featured||[]).length} / 4 selected`;
+}
+
+function saveFeatured(){
+  const ap=ldO('ap');
+  if((ap.featured||[]).length===0){toast('Please select at least 1 product to feature.');return;}
+  svO('ap',ap);
+  renderHeroFeatured();
+  toast(`✅ ${(ap.featured||[]).length} products featured on homepage!`);
+}
+
+function renderHeroFeatured(){
+  const ap=ldO('ap');
+  const prods=ld('prods');
+  const cats=ld('cats');
+  const cmap={};cats.forEach(c=>cmap[c.id]=c);
+  const featured=(ap.featured||[]).slice(0,4);
+  const grid=document.getElementById('heroFeatGrid');
+  if(!grid)return;
+  const featProds=featured.map(id=>prods.find(p=>p.id===id)).filter(Boolean);
+  if(!featProds.length){
+    // fallback placeholders
+    grid.innerHTML=['🪑','🛋️','🪵','🛏️'].map(e=>`<div class="hero-feat-card"><div class="feat-placeholder">${e}</div></div>`).join('');
+    return;
+  }
+  // Pad to 4 if fewer selected
+  while(featProds.length<4) featProds.push(null);
+  grid.innerHTML=featProds.map((p,i)=>{
+    if(!p) return `<div class="hero-feat-card" style="${i===1?'margin-top:20px':i===2?'margin-top:-20px':''}"><div class="feat-placeholder">🪑</div></div>`;
+    const cat=cmap[p.catId]||{};
+    const mt=i===1?'margin-top:20px':i===2?'margin-top:-20px':'';
+    const inner=p.img
+      ?`<img src="${p.img}" alt="${p.name}"><div class="hero-feat-overlay"></div><div class="hero-feat-name">${p.name}</div>`
+      :`<div class="feat-placeholder">${cat.icon||'🪑'}</div>`;
+    return `<div class="hero-feat-card" style="${mt}" onclick="openProductDetail('${p.id}')">${inner}</div>`;
+  }).join('');
+}
+
+// ── FONT PICKER ──
+const FONTS=[
+  {key:'syne',    head:'Syne',           body:'Inter',         url:'https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap',   sample:'Modern & Bold'},
+  {key:'playfair',head:'Playfair Display',body:'Lato',         url:'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Lato:wght@300;400;700&display=swap', sample:'Elegant & Classic'},
+  {key:'montserrat',head:'Montserrat',   body:'Open Sans',     url:'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@300;400;600&display=swap',  sample:'Clean & Professional'},
+  {key:'raleway', head:'Raleway',        body:'Source Sans 3', url:'https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&family=Source+Sans+3:wght@300;400;600&display=swap',  sample:'Stylish & Light'},
+  {key:'poppins', head:'Poppins',        body:'Nunito',        url:'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Nunito:wght@300;400;600&display=swap',         sample:'Friendly & Round'},
+  {key:'dm-serif',head:'DM Serif Display',body:'DM Sans',     url:'https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap',               sample:'Editorial & Sharp'},
+];
+
+let selectedFontKey='syne';
+
+function loadFontGrid(){
+  const ap=ldO('ap');
+  selectedFontKey=ap.fontKey||'syne';
+  const grid=document.getElementById('fontGrid');
+  if(!grid)return;
+  grid.innerHTML=FONTS.map(f=>`
+    <div class="font-card ${f.key===selectedFontKey?'selected':''}" id="fc-${f.key}" onclick="selectFont('${f.key}')">
+      <div class="font-preview-head" style="font-family:'${f.head}',serif">${f.head}</div>
+      <div class="font-preview-body" style="font-family:'${f.body}',sans-serif">${f.body} body text</div>
+      <div class="font-name">${f.sample}</div>
+    </div>`).join('');
+}
+
+function selectFont(key){
+  selectedFontKey=key;
+  // Live preview — update CSS vars immediately
+  const font=FONTS.find(f=>f.key===key);
+  if(!font)return;
+  // Load font if not already loaded
+  if(!document.getElementById('font-link-'+key)){
+    const link=document.createElement('link');
+    link.id='font-link-'+key;
+    link.rel='stylesheet';
+    link.href=font.url;
+    document.head.appendChild(link);
+  }
+  document.documentElement.style.setProperty('--font-head',`'${font.head}', serif`);
+  document.documentElement.style.setProperty('--font-body',`'${font.body}', sans-serif`);
+  // Update selected state in grid
+  document.querySelectorAll('.font-card').forEach(c=>c.classList.remove('selected'));
+  const sel=document.getElementById('fc-'+key);
+  if(sel)sel.classList.add('selected');
+  toast(`Preview: ${font.head} — click "Apply Selected Font" to save.`);
+}
+
+function saveFont(){
+  const font=FONTS.find(f=>f.key===selectedFontKey);
+  if(!font){toast('Please select a font first.');return;}
+  const ap=ldO('ap');
+  ap.fontKey=selectedFontKey;
+  ap.fontHead=font.head;
+  ap.fontBody=font.body;
+  ap.fontUrl=font.url;
+  svO('ap',ap);
+  toast(`✅ Font saved: ${font.head}! Refresh to see it fully applied.`);
+}
+
+function applyFont(){
+  const ap=ldO('ap');
+  if(!ap.fontKey||ap.fontKey==='syne') return; // default already in CSS
+  const font=FONTS.find(f=>f.key===ap.fontKey);
+  if(!font) return;
+  // Add font stylesheet
+  if(!document.getElementById('saved-font-link')){
+    const link=document.createElement('link');
+    link.id='saved-font-link';
+    link.rel='stylesheet';
+    link.href=font.url;
+    document.head.appendChild(link);
+  }
+  document.documentElement.style.setProperty('--font-head',`'${font.head}', serif`);
+  document.documentElement.style.setProperty('--font-body',`'${font.body}', sans-serif`);
+}
+
+function liveColor(cssVar,val){document.documentElement.style.setProperty(cssVar,val);}
+function previewLogo(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{document.getElementById('ap-logo-preview').innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:100%;object-fit:contain">`;};
+  r.readAsDataURL(f);
+}
+function saveLogo(){
+  const f=document.getElementById('ap-logo-file').files[0];
+  if(!f){toast('Please select an image first.');return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    const ap=ldO('ap');ap.logoImg=e.target.result;svO('ap',ap);
+    applyAppearance();toast('Logo saved!');
+  };r.readAsDataURL(f);
+}
+function clearLogo(){const ap=ldO('ap');ap.logoImg='';svO('ap',ap);document.getElementById('ap-logo-preview').innerHTML='<span>No logo uploaded</span>';applyAppearance();toast('Logo removed.');}
+function saveAppearance(){
+  const ap=ldO('ap');
+  ap.brand=document.getElementById('ap-brand').value||'Furniture Mama';
+  ap.footDesc=document.getElementById('ap-foot-desc').value;
+  ap.badge=document.getElementById('ap-badge').value;
+  ap.title=document.getElementById('ap-title').value;
+  ap.sub=document.getElementById('ap-sub').value;
+  const colorMap={
+    'col-bg':'--c-bg','col-surface':'--c-surface','col-text':'--c-text',
+    'col-accent':'--c-accent','col-accent2':'--c-accent2','col-cta':'--c-cta',
+    'col-cta-text':'--c-cta-text','col-nav-bg':'--c-nav-bg',
+    'col-hero-bg':'--c-hero-bg','col-footer-bg':'--c-footer-bg',
+    'col-border':'--c-border','col-muted':'--c-muted'
+  };
+  const colors=ap.colors||{};
+  Object.entries(colorMap).forEach(([inputId,cssVar])=>{
+    const el=document.getElementById(inputId);if(el)colors[cssVar]=el.value;
+  });
+  ap.colors=colors;svO('ap',ap);applyAppearance();toast('Appearance saved!');
+}
+function resetColors(){
+  const ap=ldO('ap');ap.colors=DEFAULT_COLORS;svO('ap',ap);
+  applyAppearance();loadApForm();toast('Colors reset to default.');
+}
+
+// Settings
+function loadStForm(){
+  const st=ldO('st');
+  const el=id=>document.getElementById(id);
+  if(el('s-wa'))    el('s-wa').value    = st.whatsapp||'';
+  if(el('s-ig'))    el('s-ig').value    = st.instagram||'';
+  if(el('s-fb'))    el('s-fb').value    = st.facebook||'';
+  if(el('s-linkedin')) el('s-linkedin').value = st.linkedin||'';
+  if(el('s-addr'))  el('s-addr').value  = st.address||'';
+  if(el('s-admin-email')) el('s-admin-email').value = st.adminEmail||'';
+  if(el('s-ejs-service')) el('s-ejs-service').value = st.ejsService||'';
+  if(el('s-ejs-template')) el('s-ejs-template').value = st.ejsTemplate||'';
+  if(el('s-ejs-key'))  el('s-ejs-key').value  = st.ejsKey||'';
+}
+
+function saveSettings(){
+  const st=ldO('st');
+  const val=id=>{const e=document.getElementById(id);return e?e.value.trim():'';};
+  st.instagram   = val('s-ig');
+  st.facebook    = val('s-fb');
+  st.linkedin    = val('s-linkedin');
+  st.address     = val('s-addr');
+  st.adminEmail  = val('s-admin-email');
+  st.ejsService  = val('s-ejs-service');
+  st.ejsTemplate = val('s-ejs-template');
+  st.ejsKey      = val('s-ejs-key');
+  // Clean WhatsApp number — strip non-digits, add BD prefix if local
+  let wa = val('s-wa').replace(/[^0-9]/g,'');
+  if(wa.startsWith('01')&&wa.length===11) wa='88'+wa;
+  st.whatsapp = wa;
+  svO('st',st);
+  applyAppearance();
+  if(typeof renderProductGrid==='function') renderProductGrid();
+  toast('✅ Settings saved!');
+}
+function changePass(){
+  const np=document.getElementById('s-newpass').value;
+  if(!np||np.length<4){toast('Minimum 4 characters.');return;}
+  const st=ldO('st');st.adminPass=np;svO('st',st);
+  document.getElementById('s-newpass').value='';toast('Password updated!');
+}
+
+// Backup/restore
+function exportData(){
+  const all={};Object.keys(K).forEach(k=>{try{all[k]=JSON.parse(localStorage.getItem(K[k]))||null;}catch{all[k]=null;}});
+  const blob=new Blob([JSON.stringify(all,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='fm-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();URL.revokeObjectURL(a.href);toast('Backup downloaded!');
+}
+
+function downloadUpdatedSite(){
+  const dataObj={};
+  Object.keys(K).forEach(k=>{
+    try{dataObj[K[k]]=localStorage.getItem(K[k]);}catch{dataObj[K[k]]=null;}
+  });
+
+  let html=document.documentElement.outerHTML;
+
+  // Inject version timestamp as a meta tag for cache-busting
+  const ver=Date.now();
+  html=html.replace('</head>',`<meta name="fm-version" content="${ver}"></head>`);
+
+  // Inject preload script that restores all localStorage data on any device
+  const injectScript=`
+<script id="fm-preload">
+(function(){
+  var data=${JSON.stringify(dataObj)};
+  Object.keys(data).forEach(function(k){
+    if(data[k]!==null&&data[k]!==undefined){
+      try{localStorage.setItem(k,data[k]);}catch(e){}
+    }
+  });
+  // Force reload if this version differs from cached version
+  var stored=localStorage.getItem('fm_site_ver');
+  var current='${ver}';
+  if(stored&&stored!==current){
+    localStorage.setItem('fm_site_ver',current);
+  } else if(!stored){
+    localStorage.setItem('fm_site_ver',current);
+  }
+  var s=document.getElementById('fm-preload');
+  if(s)s.parentNode.removeChild(s);
+})();
+<\/script>`;
+
+  html=html.replace(/<script id="fm-preload">[\s\S]*?<\/script>/g,'');
+  html=html.replace('</body>',injectScript+'</body>');
+
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='index.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('✅ Downloaded! Upload index.html to GitHub — all devices will refresh automatically.');
+}
+function importData(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        Object.keys(K).forEach(k=>{if(data[k]!==undefined&&data[k]!==null)localStorage.setItem(K[k],JSON.stringify(data[k]));});
+        toast('Data restored! Refreshing…');setTimeout(()=>location.reload(),1200);
+      }catch{toast('Invalid backup file.');}
+    };r.readAsText(f);
+  };inp.click();
+}
+function resetData(){
+  if(!confirm('Delete ALL data? This cannot be undone.'))return;
+  if(!confirm('Final confirmation — delete everything?'))return;
+  Object.values(K).forEach(k=>localStorage.removeItem(k));
+  toast('Cleared. Refreshing…');setTimeout(()=>location.reload(),1200);
+}
+
+// Admin modal helpers
+function openAdmModal(id){document.getElementById(id).classList.add('open');}
+function closeAdmModal(id){document.getElementById(id).classList.remove('open');}
+function prevAdminImg(inp,prevId){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{document.getElementById(prevId).innerHTML=`<img src="${e.target.result}">`;};r.readAsDataURL(f);
+}
+['prodModal','catModal','blogModal','revModal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+});
+
+// Toast
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+seed();
+applyAppearance();
+applyFont();
+renderHeroFeatured();
+applyPolicies();
+renderProducts();
+checkHash(); // auto-open admin if URL has #admin
+</script>
+
+<!-- ════════════════════ CHATBOT WIDGET ════════════════════ -->
+<style>
+#chat-fab{position:fixed;bottom:28px;right:28px;z-index:8000;width:56px;height:56px;border-radius:50%;background:var(--c-accent);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(193,127,62,.45);display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s;}
+#chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(193,127,62,.55);}
+#chat-fab.open svg.icon-chat{display:none;}
+#chat-fab.open svg.icon-close{display:block!important;}
+#chat-window{position:fixed;bottom:96px;right:28px;z-index:7999;width:360px;max-width:calc(100vw - 40px);background:var(--c-surface);border-radius:16px;box-shadow:0 16px 60px rgba(0,0,0,.18);display:none;flex-direction:column;overflow:hidden;border:1px solid var(--c-border);}
+#chat-window.open{display:flex;}
+.chat-head{background:var(--c-accent);padding:14px 18px;display:flex;align-items:center;gap:10px;}
+.chat-head-av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.chat-head-info{flex:1;}
+.chat-head-name{font-size:.88rem;font-weight:700;color:#fff;}
+.chat-head-status{font-size:.7rem;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:4px;}
+.chat-head-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;}
+#chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;max-height:360px;min-height:200px;scroll-behavior:smooth;}
+.msg{max-width:82%;padding:10px 14px;border-radius:12px;font-size:.82rem;line-height:1.55;}
+.msg.bot{background:var(--c-bg);color:var(--c-text);border-bottom-left-radius:4px;align-self:flex-start;border:1px solid var(--c-border);}
+.msg.user{background:var(--c-accent);color:#fff;border-bottom-right-radius:4px;align-self:flex-end;}
+.msg.typing{background:var(--c-bg);border:1px solid var(--c-border);align-self:flex-start;padding:12px 16px;}
+.typing-dots{display:flex;gap:4px;align-items:center;}
+.typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--c-muted);animation:tdot 1.2s infinite;}
+.typing-dots span:nth-child(2){animation-delay:.2s;}
+.typing-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes tdot{0%,80%,100%{transform:scale(.8);opacity:.5}40%{transform:scale(1.1);opacity:1}}
+.chat-quick{padding:8px 16px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--c-border);}
+.chat-quick-btn{background:none;border:1px solid var(--c-border);padding:5px 12px;border-radius:20px;font-size:.72rem;color:var(--c-muted);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.chat-quick-btn:hover{border-color:var(--c-accent);color:var(--c-accent);}
+.chat-foot{padding:10px 12px;border-top:1px solid var(--c-border);display:flex;gap:8px;align-items:center;}
+#chat-input{flex:1;border:1.5px solid var(--c-border);border-radius:24px;padding:9px 16px;font-size:.82rem;outline:none;font-family:var(--font-body);background:var(--c-bg);color:var(--c-text);transition:border-color .2s;}
+#chat-input:focus{border-color:var(--c-accent);}
+#chat-send{background:var(--c-accent);border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s;}
+#chat-send:hover{background:var(--c-accent2);}
+@media(max-width:480px){#chat-window{right:12px;bottom:84px;width:calc(100vw - 24px);}#chat-fab{bottom:20px;right:16px;width:50px;height:50px;}#chat-msgs{max-height:280px;}}
+</style>
+
+<button id="chat-fab" onclick="toggleChat()" title="Chat with us" aria-label="Open chat">
+  <svg class="icon-chat" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+
+<div id="chat-window">
+  <div class="chat-head">
+    <div class="chat-head-av">🪑</div>
+    <div class="chat-head-info">
+      <div class="chat-head-name">Furniture Mama Assistant</div>
+      <div class="chat-head-status"><span class="chat-head-dot"></span>Online — ask me anything</div>
+    </div>
+  </div>
+  <div id="chat-msgs"></div>
+  <div class="chat-quick" id="chat-quick">
+    <button class="chat-quick-btn" onclick="sendQuick('What products do you have?')">Our products</button>
+    <button class="chat-quick-btn" onclick="sendQuick('How do I place an order?')">How to order</button>
+    <button class="chat-quick-btn" onclick="sendQuick('What is your delivery policy?')">Delivery</button>
+    <button class="chat-quick-btn" onclick="sendQuick('Can I get custom furniture made?')">Custom order</button>
+  </div>
+  <div class="chat-foot">
+    <input type="text" id="chat-input" placeholder="Ask about our furniture…" onkeydown="if(event.key==='Enter')sendChat()">
+    <button id="chat-send" onclick="sendChat()" aria-label="Send">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  CHATBOT
+// ═══════════════════════════════════════════
+let chatHistory=[];
+let chatOpen=false;
+
+function buildChatSystemPrompt(){
+  const st=ldO('st');
+  const ap=ldO('ap');
+  const prods=ld('prods');
+  const cats=ld('cats');
+  const pol=ldO('pol');
+  const cmap={};cats.forEach(c=>cmap[c.id]=c.name);
+  const prodList=prods.slice(0,20).map(p=>`- ${p.name} (${cmap[p.catId]||'Furniture'}): ৳${Number(p.price).toLocaleString()}${p.desc?' — '+p.desc.slice(0,80):''}`).join('\n');
+  const waNum=st.whatsapp||'8801628340463';
+  return `You are a helpful and friendly sales assistant for Furniture Mama, an online furniture store in Bangladesh. Your job is to help customers find the right furniture, answer questions, and guide them to make a purchase via WhatsApp.
+
+ABOUT FURNITURE MAMA:
+- Brand: ${ap.brand||'Furniture Mama'}
+- Location: ${st.address||'Dhaka, Bangladesh'}
+- WhatsApp: +${waNum}
+- Instagram: ${st.instagram||'@furniture_maama'}
+- We specialize in quality handcrafted furniture for homes and offices
+
+CURRENT PRODUCTS (${prods.length} total):
+${prodList||'No products listed yet — ask about our range.'}
+
+DELIVERY POLICY:
+${pol.delAreas||'We deliver across Dhaka and surrounding districts.'}
+Charges: ${pol.delCharges||'৳300–৳800 within Dhaka. Free delivery on orders above ৳50,000.'}
+
+RETURN POLICY:
+${pol.retElig||'Returns accepted within 7 days for manufacturing defects or significant order differences.'}
+
+CUSTOM ORDERS:
+We accept custom furniture orders. Customers can describe their requirements and we'll provide a price quote within 24 hours.
+
+ORDERING:
+All orders are placed via WhatsApp: +${waNum}
+
+RULES:
+- Be warm, helpful, and concise. Keep replies under 3 sentences unless explaining a policy.
+- Always mention WhatsApp (+${waNum}) when a customer is ready to order or wants more info.
+- If asked about a product not in the list, say we may have it and suggest they check via WhatsApp.
+- Reply in the same language the customer uses (Bangla or English).
+- Never make up prices or policies not listed above.`;
+}
+
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('chat-window').classList.toggle('open',chatOpen);
+  document.getElementById('chat-fab').classList.toggle('open',chatOpen);
+  if(chatOpen&&chatHistory.length===0){
+    setTimeout(()=>addBotMsg("👋 Hi! I'm the Furniture Mama assistant. Ask me anything about our furniture, delivery, or custom orders!"),300);
+  }
+  if(chatOpen) document.getElementById('chat-input').focus();
+}
+
+function addBotMsg(text){
+  const el=document.createElement('div');
+  el.className='msg bot';
+  el.textContent=text;
+  appendMsg(el);
+  document.getElementById('chat-quick').style.display='none';
+}
+
+function addUserMsg(text){
+  const el=document.createElement('div');
+  el.className='msg user';
+  el.textContent=text;
+  appendMsg(el);
+}
+
+function showTyping(){
+  const el=document.createElement('div');
+  el.className='msg typing';
+  el.id='chat-typing';
+  el.innerHTML='<div class="typing-dots"><span></span><span></span><span></span></div>';
+  appendMsg(el);
+  return el;
+}
+
+function appendMsg(el){
+  const msgs=document.getElementById('chat-msgs');
+  msgs.appendChild(el);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function removeTyping(){
+  const t=document.getElementById('chat-typing');
+  if(t)t.remove();
+}
+
+function sendQuick(text){
+  document.getElementById('chat-quick').style.display='none';
+  handleSend(text);
+}
+
+function sendChat(){
+  const inp=document.getElementById('chat-input');
+  const text=inp.value.trim();
+  if(!text)return;
+  inp.value='';
+  handleSend(text);
+}
+
+async function handleSend(text){
+  addUserMsg(text);
+  chatHistory.push({role:'user',content:text});
+  const typing=showTyping();
+  document.getElementById('chat-send').disabled=true;
+  document.getElementById('chat-input').disabled=true;
+
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:400,
+        system:buildChatSystemPrompt(),
+        messages:chatHistory.slice(-10)
+      })
+    });
+    const data=await response.json();
+    removeTyping();
+    const reply=(data.content&&data.content[0]&&data.content[0].text)||"I'm having trouble connecting right now. Please reach us directly on WhatsApp!";
+    chatHistory.push({role:'assistant',content:reply});
+    addBotMsg(reply);
+  }catch(err){
+    removeTyping();
+    addBotMsg("Sorry, I'm having trouble right now. Please contact us on WhatsApp for instant help!");
+  }finally{
+    document.getElementById('chat-send').disabled=false;
+    document.getElementById('chat-input').disabled=false;
+    document.getElementById('chat-input').focus();
+  }
+}
+</script>
+
+<script>
+// ═══════════════════════════════════════════
+//  OTP LOGIN SYSTEM
+// ═══════════════════════════════════════════
+let pendingOtp='';
+let otpExpiry=0;
+
+function doLogin(){
+  const u=document.getElementById('adm-user').value.trim();
+  const p=document.getElementById('adm-pass').value;
+  const st=ldO('st');
+  const cp=st.adminPass||'mama2025';
+  document.getElementById('admErr').style.display='none';
+  if(u==='admin'&&p===cp){
+    const adminEmail=st.adminEmail||'';
+    if(!adminEmail||!st.ejsService||!st.ejsTemplate||!st.ejsKey){
+      // No email configured — show bypass option
+      document.getElementById('login-step-1').style.display='none';
+      document.getElementById('login-step-noemail').style.display='block';
+    } else {
+      sendOtpEmail(adminEmail,st);
+    }
+  } else {
+    document.getElementById('admErr').style.display='block';
+  }
+}
+
+function sendOtpEmail(email,st){
+  // Generate 6-digit OTP
+  pendingOtp=Math.floor(100000+Math.random()*900000).toString();
+  otpExpiry=Date.now()+10*60*1000; // 10 minutes
+
+  // Show OTP step
+  document.getElementById('login-step-1').style.display='none';
+  document.getElementById('login-step-2').style.display='block';
+  document.getElementById('otp-hint').textContent=`A 6-digit code was sent to ${email.replace(/(.{2}).+(@.+)/,'$1***$2')}`;
+
+  // Send via EmailJS
+  try{
+    emailjs.init(st.ejsKey);
+    emailjs.send(st.ejsService,st.ejsTemplate,{
+      to_email:email,
+      otp_code:pendingOtp,
+      brand_name:'Furniture Mama'
+    }).then(()=>{
+      toast('📧 OTP sent to your email!');
+    }).catch(()=>{
+      toast('⚠️ Email send failed. Use the code shown in console for testing.');
+      console.log('TEST OTP:',pendingOtp);
+    });
+  }catch(e){
+    console.log('EmailJS not configured. TEST OTP:',pendingOtp);
+    toast('📧 Check browser console for test OTP code.');
+  }
+}
+
+function verifyOtp(){
+  const entered=document.getElementById('otp-input').value.trim();
+  document.getElementById('otpErr').style.display='none';
+  if(Date.now()>otpExpiry){
+    document.getElementById('otpErr').textContent='Code expired. Please try again.';
+    document.getElementById('otpErr').style.display='block';
+    return;
+  }
+  if(entered===pendingOtp){
+    pendingOtp='';
+    admLoggedIn=true;
+    showAdmPanel();
+  } else {
+    document.getElementById('otpErr').style.display='block';
+  }
+}
+
+function resendOtp(){
+  const st=ldO('st');
+  if(st.adminEmail) sendOtpEmail(st.adminEmail,st);
+  else toast('No admin email set.');
+}
+
+function bypassOtpLogin(){
+  admLoggedIn=true;
+  showAdmPanel();
+}
+
+function resetLoginSteps(){
+  document.getElementById('login-step-1').style.display='block';
+  document.getElementById('login-step-2').style.display='none';
+  document.getElementById('login-step-noemail').style.display='none';
+  document.getElementById('otp-input').value='';
+  document.getElementById('otpErr').style.display='none';
+}
+</script>
+
+</body>
+</html>
